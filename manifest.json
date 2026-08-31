@@ -1,0 +1,16 @@
+{
+  "name": "Seed",
+  "short_name": "Seed",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#161826",
+  "theme_color": "#161826",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
