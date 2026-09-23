@@ -1,10 +1,17 @@
 {
   "name": "Seed",
   "short_name": "Seed",
+  "description": "Aplicación de finanzas personales para llevar el control del presupuesto y el ahorro.",
+  "id": "/seed/",
+  "scope": "./",
   "start_url": "./",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait",
   "background_color": "#161826",
   "theme_color": "#161826",
+  "lang": "es",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icon-192.png",

@@ -19,6 +19,385 @@
   </noscript>
 </head>
 <body>
+  <script>
+    (() => {
+      const installState = { deferredPrompt: null };
+
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        installState.deferredPrompt = event;
+        window.__seedInstallPrompt = () => {
+          if (!installState.deferredPrompt) return Promise.resolve(false);
+          installState.deferredPrompt.prompt();
+          return installState.deferredPrompt.userChoice
+            .then((choice) => {
+              installState.deferredPrompt = null;
+              return choice.outcome === 'accepted';
+            })
+            .catch(() => false);
+        };
+        window.dispatchEvent(new CustomEvent('seed-install-ready', { detail: true }));
+      });
+
+      window.addEventListener('appinstalled', () => {
+        installState.deferredPrompt = null;
+        window.__seedInstallPrompt = () => Promise.resolve(false);
+      });
+
+      if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+      }
+
+      const STORAGE = {
+        app: 'seed.v1',
+        pin: 'seed.pin',
+        locked: 'seed.locked',
+        theme: 'seed.theme',
+        lastActive: 'seed.lastActive'
+      };
+
+      function readAppData() {
+        try {
+          const raw = localStorage.getItem(STORAGE.app);
+          return raw ? JSON.parse(raw) : { entries: [], setup: true };
+        } catch (error) {
+          return { entries: [], setup: true };
+        }
+      }
+
+      function writeAppData(data) {
+        localStorage.setItem(STORAGE.app, JSON.stringify(data));
+      }
+
+      function toHex(bytes) {
+        return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      async function hashPin(pin) {
+        const text = String(pin).trim();
+        if (!text) return '';
+        if (window.crypto && crypto.subtle) {
+          const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+          return toHex(new Uint8Array(digest));
+        }
+        return btoa(text).replace(/[^a-zA-Z0-9]/g, '').slice(0, 64);
+      }
+
+      async function setPin(pin) {
+        const clean = String(pin || '').replace(/\D/g, '');
+        if (!/^\d{4,8}$/.test(clean)) {
+          throw new Error('El PIN debe tener entre 4 y 8 dígitos.');
+        }
+        const hash = await hashPin(clean);
+        localStorage.setItem(STORAGE.pin, hash);
+        localStorage.setItem(STORAGE.locked, '0');
+        return true;
+      }
+
+      async function isPinValid(pin) {
+        const expected = localStorage.getItem(STORAGE.pin);
+        if (!expected) return true;
+        const hash = await hashPin(pin);
+        return hash === expected;
+      }
+
+      function applyTheme() {
+        const mode = localStorage.getItem(STORAGE.theme) || 'dark';
+        document.body.setAttribute('data-seed-theme', mode);
+        document.body.style.background = mode === 'dark' ? '#161826' : '#f7f7f2';
+      }
+
+      function toggleTheme() {
+        const next = localStorage.getItem(STORAGE.theme) === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(STORAGE.theme, next);
+        applyTheme();
+      }
+
+      function exportBackup() {
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          app: 'Seed',
+          version: '2.4.0',
+          data: readAppData()
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'seed-backup.json';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        return true;
+      }
+
+      function importBackup(file) {
+        return new Promise((resolve, reject) => {
+          if (!file) {
+            reject(new Error('No se seleccionó ningún archivo.'));
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const text = String(reader.result || '{}');
+              const parsed = JSON.parse(text);
+              const next = parsed.data || parsed;
+              if (!next || typeof next !== 'object') {
+                throw new Error('El archivo no contiene datos válidos.');
+              }
+              writeAppData(next);
+              localStorage.setItem(STORAGE.lastActive, String(Date.now()));
+              resolve(true);
+            } catch (error) {
+              reject(error);
+            }
+          };
+          reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+          reader.readAsText(file);
+        });
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById('seed-toast');
+        if (toast) {
+          toast.textContent = message;
+          toast.classList.add('show');
+          clearTimeout(toast._timer);
+          toast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+          return;
+        }
+        const el = document.createElement('div');
+        el.id = 'seed-toast';
+        el.textContent = message;
+        Object.assign(el.style, {
+          position: 'fixed',
+          right: '18px',
+          bottom: '90px',
+          background: '#1b2030',
+          color: '#fff',
+          borderRadius: '10px',
+          padding: '10px 12px',
+          boxShadow: '0 10px 25px rgba(0,0,0,.18)',
+          zIndex: 99999,
+          font: '600 12px/1.3 system-ui, sans-serif',
+          opacity: '0',
+          transform: 'translateY(6px)',
+          transition: 'all .2s ease'
+        });
+        document.body.appendChild(el);
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 10);
+        setTimeout(() => {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(6px)';
+        }, 2200);
+      }
+
+      function createSecurityTools() {
+        const dock = document.getElementById('seed-security-dock');
+        if (dock) return;
+
+        const wrap = document.createElement('div');
+        wrap.id = 'seed-security-dock';
+        Object.assign(wrap.style, {
+          position: 'fixed',
+          right: '16px',
+          bottom: '18px',
+          display: 'flex',
+          gap: '8px',
+          zIndex: 99998,
+          flexWrap: 'wrap',
+          justifyContent: 'flex-end',
+          maxWidth: '220px'
+        });
+
+        const buildButton = (label, action) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = label;
+          button.style.cssText = 'border:none; background:#161826; color:#f7f7f2; border-radius:999px; padding:10px 12px; font:600 12px/1 system-ui, sans-serif; box-shadow:0 8px 20px rgba(0,0,0,.18); cursor:pointer;';
+          button.addEventListener('click', action);
+          return button;
+        };
+
+        const inp = document.createElement('input');
+        inp.type = 'file';
+        inp.accept = '.json,application/json';
+        inp.style.display = 'none';
+        inp.addEventListener('change', async (event) => {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+          try {
+            await importBackup(file);
+            showToast('Datos restaurados');
+            window.dispatchEvent(new Event('storage'));
+          } catch (error) {
+            showToast(error.message || 'No se pudo restaurar');
+          }
+          inp.value = '';
+        });
+
+        wrap.appendChild(buildButton('Exportar', () => {
+          exportBackup();
+          showToast('Copia de seguridad creada');
+        }));
+
+        wrap.appendChild(buildButton('Restaurar', () => inp.click()));
+
+        wrap.appendChild(buildButton('Bloquear', async () => {
+          const pin = window.prompt('Crea o actualiza un PIN de 4 a 8 dígitos:');
+          if (pin === null) return;
+          try {
+            await setPin(pin);
+            localStorage.setItem(STORAGE.locked, '1');
+            showToast('PIN activado');
+            createLockOverlay();
+            showLockOverlay();
+          } catch (error) {
+            showToast(error.message || 'PIN no válido');
+          }
+        }));
+
+        wrap.appendChild(buildButton('Tema', () => {
+          toggleTheme();
+          showToast(localStorage.getItem(STORAGE.theme) === 'dark' ? 'Tema oscuro' : 'Tema claro');
+        }));
+
+        document.body.appendChild(wrap);
+        document.body.appendChild(inp);
+      }
+
+      function createLockOverlay() {
+        let overlay = document.getElementById('seed-lock-overlay');
+        if (overlay) return overlay;
+
+        overlay = document.createElement('div');
+        overlay.id = 'seed-lock-overlay';
+        overlay.style.cssText = 'position:fixed; inset:0; background:rgba(12,14,20,.85); display:none; align-items:center; justify-content:center; z-index:99999;';
+
+        const panel = document.createElement('div');
+        panel.style.cssText = 'width:min(82vw, 320px); background:#1b2030; color:#f8f9fb; border-radius:18px; padding:24px 18px 18px; box-shadow:0 20px 35px rgba(0,0,0,.28);';
+
+        const title = document.createElement('div');
+        title.textContent = 'Seed bloqueado';
+        title.style.cssText = 'font:700 18px/1.2 system-ui, sans-serif; text-align:center; margin-bottom:12px;';
+
+        const input = document.createElement('input');
+        input.type = 'password';
+        input.inputMode = 'numeric';
+        input.maxLength = 8;
+        input.placeholder = 'PIN';
+        input.style.cssText = 'width:100%; border:none; border-radius:10px; background:rgba(255,255,255,.08); color:#fff; padding:12px 14px; font:600 18px/1.3 system-ui, sans-serif; text-align:center; letter-spacing:2px; margin-bottom:12px;';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = 'Desbloquear';
+        button.style.cssText = 'width:100%; border:none; border-radius:10px; background:#7a8cff; color:#fff; padding:12px; font:700 14px/1.2 system-ui, sans-serif; cursor:pointer;';
+
+        button.addEventListener('click', async () => {
+          const pin = input.value.trim();
+          if (!pin) {
+            showToast('Introduce tu PIN');
+            return;
+          }
+          if (await isPinValid(pin)) {
+            localStorage.setItem(STORAGE.locked, '0');
+            hideLockOverlay();
+            showToast('Desbloqueado');
+          } else {
+            showToast('PIN incorrecto');
+            input.value = '';
+            input.focus();
+          }
+        });
+
+        input.addEventListener('keydown', async (event) => {
+          if (event.key === 'Enter') {
+            button.click();
+          }
+        });
+
+        panel.appendChild(title);
+        panel.appendChild(input);
+        panel.appendChild(button);
+        overlay.appendChild(panel);
+        document.body.appendChild(overlay);
+        return overlay;
+      }
+
+      function showLockOverlay() {
+        const overlay = createLockOverlay();
+        overlay.style.display = 'flex';
+        const input = overlay.querySelector('input');
+        setTimeout(() => input && input.focus(), 50);
+      }
+
+      function hideLockOverlay() {
+        const overlay = document.getElementById('seed-lock-overlay');
+        if (overlay) overlay.style.display = 'none';
+      }
+
+      function handleInactivityLock() {
+        const last = Number(localStorage.getItem(STORAGE.lastActive) || Date.now());
+        const elapsed = Date.now() - last;
+        const isLocked = localStorage.getItem(STORAGE.locked) === '1' && localStorage.getItem(STORAGE.pin);
+        if (isLocked && elapsed > 300000) {
+          showLockOverlay();
+        }
+      }
+
+      function registerActivity() {
+        localStorage.setItem(STORAGE.lastActive, String(Date.now()));
+        if (localStorage.getItem(STORAGE.pin) && localStorage.getItem(STORAGE.locked) === '1') {
+          hideLockOverlay();
+        }
+      }
+
+      function initSecurity() {
+        applyTheme();
+        createSecurityTools();
+        createLockOverlay();
+
+        if (localStorage.getItem(STORAGE.pin) && localStorage.getItem(STORAGE.locked) === '1') {
+          showLockOverlay();
+        }
+
+        ['click', 'keydown', 'mousemove', 'touchstart', 'touchmove'].forEach((eventName) => {
+          document.addEventListener(eventName, registerActivity, { passive: true });
+        });
+
+        setInterval(handleInactivityLock, 60000);
+      }
+
+      window.seedTools = {
+        exportBackup,
+        importBackup,
+        setPin,
+        isPinValid,
+        toggleTheme,
+        lock: () => {
+          localStorage.setItem(STORAGE.locked, '1');
+          showLockOverlay();
+        },
+        unlock: async (pin) => {
+          if (await isPinValid(pin)) {
+            localStorage.setItem(STORAGE.locked, '0');
+            hideLockOverlay();
+            return true;
+          }
+          return false;
+        }
+      };
+
+      window.addEventListener('DOMContentLoaded', initSecurity, { once: true });
+    })();
+  </script>
   <div id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" sc-camel-view-box="0 0 100 100"><rect width="100" height="100" fill="#161826"></rect><rect x="30" y="30" width="40" height="40" rx="10" fill="none" stroke="#968ae0" stroke-width="2.5"></rect><path d="M50 42v16M43 50h14" stroke="#d2cefd" stroke-width="2.5" stroke-linecap="round"></path></svg></div>
   <div id="__bundler_loading">Unpacking...</div>
 
@@ -309,6 +688,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     // preserve ordering (React before ReactDOM before Babel before text/babel).
     const doc = new DOMParser().parseFromString(template, 'text/html');
     document.documentElement.replaceWith(doc.documentElement);
+
+    const helmet = document.querySelector('x-dc > helmet');
+    if (helmet && document.head) {
+      while (helmet.firstChild) {
+        document.head.appendChild(helmet.firstChild);
+      }
+      helmet.remove();
+    }
 
     // Resolve page-frame markers: mint this document's own blob for each
     // framed page — from local text when this is the root, otherwise by
