@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#161826">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; connect-src 'self'; worker-src blob:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Seed">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<title>Seed</title>
+<link rel="stylesheet" href="_ds/nocturne-8e76c35b-40bb-4437-a8da-054f849536fd/styles.css">
+<script src="_ds/nocturne-8e76c35b-40bb-4437-a8da-054f849536fd/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap">
+<style>
+html,body{margin:0;padding:0;height:100%;background:var(--color-bg);color:var(--color-text);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+*{-webkit-tap-highlight-color:transparent}
+a{color:var(--color-accent-300);text-decoration:none}a:hover{color:var(--color-accent-200)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+@keyframes sheetUp{from{transform:translateY(101%)}to{transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes riseIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastIn{0%{opacity:0;transform:translateY(10px)}10%{opacity:1;transform:translateY(0)}78%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
+@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes popNum{0%{transform:scale(.94);opacity:.4}100%{transform:scale(1);opacity:1}}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{width:0;height:0}
+.kick{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-500);white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--color-neutral-800) 12%,var(--color-neutral-800) 88%,transparent)}
+</style>
+</helmet>
+
+<div style="height:100dvh;display:flex;justify-content:center;background:var(--color-bg)">
+<div style="width:100%;max-width:520px;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;background:var(--color-bg)">
+
+  <sc-if value="{{ hasUpdate }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top) + 12px) 20px 12px;background:color-mix(in srgb, var(--color-accent) 12%, var(--color-bg));border-bottom:1px solid var(--color-accent-800)">
+      <span style="width:6px;height:6px;border-radius:99px;background:var(--color-accent);flex:none;animation:breathe 2.4s ease-in-out infinite"></span>
+      <span style="flex:1;font-size:13px;color:var(--color-accent-200)">Hay una versión nueva de Seed</span>
+      <button onClick="{{ applyUpdate }}" class="btn btn-primary" style="min-height:38px;font-size:13px;white-space:nowrap">Actualizar</button>
+    </div>
+  </sc-if>
+
+  <div class="scroll" style="flex:1;padding:calc(env(safe-area-inset-top) + 20px) 22px 0">
+
+    <!-- ═══════════ INICIO ═══════════ -->
+    <sc-if value="{{ isInicio }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Inicio" style="animation:fadeIn .22s ease">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <span style="display:flex;align-items:center;gap:8px;font-size:14.5px;letter-spacing:.01em;color:var(--color-neutral-300)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex:none">
+            <path d="M6 14.5c0-5.6 3-10.6 6-13.5 3 2.9 6 7.9 6 13.5a6 6 0 0 1-12 0z" stroke="var(--color-accent)" stroke-width="1.7" stroke-linejoin="round"></path>
+            <path d="M12 20.5V8.5" stroke="var(--color-accent-300)" stroke-width="1.5" stroke-linecap="round"></path>
+          </svg>
+          seed
+        </span>
+        <div style="display:flex;align-items:center;gap:14px">
+          <span class="kick">{{ dateLabel }}</span>
+          <span onClick="{{ openMenu }}" style="width:34px;height:34px;margin:-8px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:19px;line-height:1;color:var(--color-neutral-400)">⋮</span>
+        </div>
+      </div>
+
+      <div style="margin-top:40px">
+        <span class="kick">libre hoy</span>
+        <div class="num" style="font-size:74px;font-weight:200;letter-spacing:-.045em;line-height:.92;margin-top:10px;animation:popNum .3s ease">{{ freeToday }}</div>
+        <p style="margin:14px 0 0;font-size:13.5px;line-height:1.55;color:var(--color-neutral-400);max-width:300px;text-wrap:pretty">{{ freeLine }}</p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:9px;margin-top:20px">
+        <span style="width:5px;height:5px;border-radius:99px;background:var(--color-accent);animation:breathe 2.8s ease-in-out infinite"></span>
+        <span style="font-size:12.5px;color:var(--color-neutral-400);white-space:nowrap">{{ streakText }}</span>
+      </div>
+
+      <div class="rule" style="margin-top:28px"></div>
+
+      <div style="margin-top:24px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <span class="kick">hoy</span>
+          <span class="num" style="font-size:12.5px;color:var(--color-neutral-400)">{{ todaySpentText }}</span>
+        </div>
+        <sc-if value="{{ hasToday }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:6px">
+          <sc-for list="{{ todayEntries }}" as="e" hint-placeholder-count="3">
+            <div onClick="{{ e.tap }}" style="display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--color-neutral-900);cursor:pointer">
+              <span style="{{ e.dotStyle }}"></span>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:16px;font-weight:300;letter-spacing:-.01em">{{ e.cat }}</span>
+                <span style="font-size:11.5px;color:var(--color-neutral-500)">{{ e.meta }}</span>
+              </div>
+              <sc-if value="{{ e.armed }}" hint-placeholder-val="{{ false }}">
+                <span onClick="{{ e.remove }}" style="font-size:12px;color:var(--color-accent-300);padding:4px 9px;border-radius:99px;box-shadow:inset 0 0 0 1px var(--color-accent-700)">borrar</span>
+              </sc-if>
+              <span class="num" style="font-size:16px;font-weight:300;color:var(--color-neutral-200)">{{ e.amount }}</span>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ noToday }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:12px 0 0;font-size:13.5px;line-height:1.55;color:var(--color-neutral-500)">Nada registrado hoy. El día completo sigue tuyo.</p>
+        </sc-if>
+      </div>
+
+      <div style="margin-top:26px">
+        <span class="kick">esta semana</span>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px">
+          <sc-for list="{{ week }}" as="w" hint-placeholder-count="7">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="height:30px;display:flex;align-items:center;justify-content:center">
+                <span style="{{ w.dotStyle }}"></span>
+              </div>
+              <span style="{{ w.labelStyle }}">{{ w.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div onClick="{{ goAhorro }}" style="position:relative;margin-top:26px;padding:20px;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:inset 0 0 0 1px var(--color-neutral-800)">
+        <div style="{{ jarBandStyle }}"></div>
+        <div style="position:relative">
+          <span class="kick">ahorro · {{ goalName }}</span>
+          <div class="num" style="font-size:36px;font-weight:200;letter-spacing:-.04em;line-height:1;margin-top:8px">{{ savingsText }}</div>
+          <span style="font-size:12.5px;color:var(--color-neutral-500)">{{ goalLine }}</span>
+        </div>
+      </div>
+
+      <div style="height:44px"></div>
+    </div>
+    </sc-if>
+
+    <!-- ═══════════ MES ═══════════ -->
+    <sc-if value="{{ isMes }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Mes" style="animation:riseIn .28s ease">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <span style="font-size:14.5px;color:var(--color-neutral-300)">el mes</span>
+        <span class="kick">{{ monthLabel }}</span>
+      </div>
+
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;height:288px;margin-top:14px">
+        <svg viewBox="0 0 300 300" style="position:absolute;width:288px;height:288px">
+          <circle cx="150" cy="150" r="126" fill="none" stroke="var(--color-neutral-900)" stroke-width="10"></circle>
+          <circle cx="150" cy="150" r="126" fill="none" stroke="var(--color-accent-700)" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ ringFixed }}" transform="rotate(-90 150 150)"></circle>
+          <circle cx="150" cy="150" r="126" fill="none" stroke="var(--color-accent-400)" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ ringSpent }}" stroke-dashoffset="{{ ringSpentOffset }}" transform="rotate(-90 150 150)"></circle>
+          <circle cx="150" cy="150" r="138" fill="none" stroke="var(--color-accent-200)" stroke-width="3" stroke-dasharray="{{ ringOver }}" transform="rotate(-90 150 150)"></circle>
+          <circle cx="150" cy="150" r="103" fill="none" stroke="var(--color-neutral-900)" stroke-width="3"></circle>
+          <circle cx="150" cy="150" r="103" fill="none" stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round" stroke-dasharray="{{ ringSave }}" transform="rotate(-90 150 150)"></circle>
+          <sc-for list="{{ ticks }}" as="t" hint-placeholder-count="31">
+            <line x1="150" y1="17" x2="150" y2="{{ t.y2 }}" stroke="{{ t.stroke }}" stroke-width="1.7" transform="{{ t.rot }}"></line>
+          </sc-for>
+        </svg>
+        <div style="position:relative;text-align:center">
+          <span class="kick">te queda del mes</span>
+          <div class="num" style="font-size:44px;font-weight:200;letter-spacing:-.04em;line-height:1;margin-top:6px">{{ remainingMonth }}</div>
+          <span style="font-size:12px;color:var(--color-neutral-500)">{{ daysLeftText }}</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:8px">
+        <sc-for list="{{ legend }}" as="l" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="{{ l.dotStyle }}"></span>
+            <span style="font-size:11.5px;color:var(--color-neutral-500)">{{ l.name }}</span>
+            <span class="num" style="font-size:11.5px;color:var(--color-neutral-300)">{{ l.amount }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ overText }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:14px 0 0;font-size:12.5px;line-height:1.55;color:var(--color-accent-300);text-wrap:pretty">{{ overText }}</p>
+      </sc-if>
+
+      <div class="rule" style="margin-top:26px"></div>
+
+      <div style="margin-top:24px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <span class="kick">día por día</span>
+          <span class="num" style="font-size:12px;color:var(--color-neutral-300)">{{ pickedLabel }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:12px;margin-top:16px">
+          <sc-for list="{{ dots }}" as="d" hint-placeholder-count="31">
+            <div onClick="{{ d.pick }}" style="display:flex;align-items:center;justify-content:center;height:30px;cursor:pointer">
+              <span style="{{ d.style }}"></span>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin:12px 0 0;font-size:11.5px;line-height:1.6;color:var(--color-neutral-500);text-wrap:pretty">Punto grande, día caro. Hueco, día sin gasto.</p>
+      </div>
+
+      <div style="margin-top:26px">
+        <span class="kick">reparto</span>
+        <sc-if value="{{ notEditingFixed }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:2px;height:8px;margin-top:14px;border-radius:99px;overflow:hidden">
+          <sc-for list="{{ catStats }}" as="c" hint-placeholder-count="5">
+            <div style="{{ c.segStyle }}"></div>
+          </sc-for>
+        </div>
+        <div style="margin-top:6px">
+          <sc-for list="{{ catStats }}" as="c" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--color-neutral-900)">
+              <span style="{{ c.dotStyle }}"></span>
+              <span style="flex:1;font-size:15px;font-weight:300">{{ c.name }}</span>
+              <span class="num" style="font-size:11.5px;color:var(--color-neutral-500);width:36px;text-align:right">{{ c.pct }}</span>
+              <span class="num" style="font-size:15px;font-weight:300;color:var(--color-neutral-200)">{{ c.amount }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="height:44px"></div>
+    </div>
+    </sc-if>
+
+    <!-- ═══════════ AHORRO ═══════════ -->
+    <sc-if value="{{ isAhorro }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Ahorro" style="animation:riseIn .28s ease">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <span style="font-size:14.5px;color:var(--color-neutral-300)">ahorro</span>
+        <span class="kick">{{ monthLabel }}</span>
+      </div>
+
+      <div style="display:flex;align-items:flex-end;gap:24px;margin-top:28px">
+        <div style="position:relative;width:118px;height:206px;flex:none;border-radius:14px 14px 18px 18px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--color-neutral-800);background:linear-gradient(180deg,color-mix(in srgb,var(--color-surface) 55%,transparent),transparent)">
+          <div style="{{ jarFillStyle }}"></div>
+          <div style="{{ jarLineStyle }}"></div>
+          <sc-for list="{{ jarMarks }}" as="m" hint-placeholder-count="3">
+            <div style="{{ m.style }}"></div>
+          </sc-for>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:18px">
+          <div>
+            <span class="kick">llevas</span>
+            <div class="num" style="font-size:38px;font-weight:200;letter-spacing:-.04em;line-height:1;margin-top:6px">{{ savingsText }}</div>
+            <span style="font-size:12.5px;color:var(--color-neutral-500)">{{ goalLine }}</span>
+          </div>
+          <div>
+            <span class="kick">meta</span>
+            <div style="font-size:17px;font-weight:300;margin-top:5px">{{ goalName }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <span class="kick">mis metas</span>
+          <button onClick="{{ toggleEditGoals }}" class="btn btn-primary" style="font-size:12.5px;min-height:36px;padding:0 14px;white-space:nowrap;flex:none">{{ editGoalsLabel }}</button>
+        </div>
+
+        <sc-if value="{{ notEditingGoals }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+          <div style="padding:16px;border-radius:var(--radius-lg);background:var(--color-surface);box-shadow:inset 0 0 0 1px var(--color-neutral-800)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+              <span style="font-size:15px;font-weight:300">Ahorro del mes</span>
+              <span class="num" style="font-size:12px;color:var(--color-neutral-500)">{{ monthlyText }}</span>
+            </div>
+            <div style="height:5px;border-radius:99px;background:var(--color-neutral-900);overflow:hidden;margin-top:11px">
+              <div style="{{ monthlyFillStyle }}"></div>
+            </div>
+            <span style="display:block;margin-top:9px;font-size:12px;line-height:1.5;color:var(--color-neutral-500)">{{ monthlyNote }}</span>
+          </div>
+          <div style="padding:16px;border-radius:var(--radius-lg);background:var(--color-surface);box-shadow:inset 0 0 0 1px var(--color-neutral-800)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+              <span style="font-size:15px;font-weight:300">{{ purchaseName }}</span>
+              <span class="num" style="font-size:12px;color:var(--color-neutral-500)">{{ purchaseText }}</span>
+            </div>
+            <div style="height:5px;border-radius:99px;background:var(--color-neutral-900);overflow:hidden;margin-top:11px">
+              <div style="{{ purchaseFillStyle }}"></div>
+            </div>
+            <span style="display:block;margin-top:9px;font-size:12px;line-height:1.5;color:var(--color-neutral-500)">{{ purchaseNote }}</span>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ editingGoals }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+          <span class="kick">cuánto debo guardar cada mes</span>
+          <input class="input" value="{{ monthlyGoalRaw }}" onChange="{{ setMonthlyGoal }}" inputmode="numeric" placeholder="Meta mensual" style="width:100%;box-sizing:border-box;min-height:44px;font-size:14px" />
+          <span class="kick" style="margin-top:6px">ya llevo este mes</span>
+          <input class="input" value="{{ monthlySavedRaw }}" onChange="{{ setMonthlySaved }}" inputmode="numeric" placeholder="0" style="width:100%;box-sizing:border-box;min-height:44px;font-size:14px" />
+
+          <div class="rule" style="margin:16px 0 8px"></div>
+
+          <span class="kick">quiero comprar</span>
+          <input class="input" value="{{ purchaseNameRaw }}" onChange="{{ setPurchaseName }}" placeholder="Qué quiero comprar" style="width:100%;box-sizing:border-box;min-height:44px;font-size:14px" />
+          <div style="display:flex;gap:7px">
+            <input class="input" value="{{ purchaseTargetRaw }}" onChange="{{ setPurchaseTarget }}" inputmode="numeric" placeholder="Cuánto cuesta" style="flex:1;min-width:0;box-sizing:border-box;min-height:44px;font-size:14px" />
+            <input class="input" value="{{ purchaseSavedRaw }}" onChange="{{ setPurchaseSaved }}" inputmode="numeric" placeholder="Ya llevo" style="flex:1;min-width:0;box-sizing:border-box;min-height:44px;font-size:14px" />
+          </div>
+        </div>
+        </sc-if>
+      </div>
+
+      <div style="margin-top:26px">
+        <span class="kick">guardar ahora</span>
+        <div style="display:flex;gap:7px;margin-top:12px">
+          <sc-for list="{{ dests }}" as="dd" hint-placeholder-count="2">
+            <div onClick="{{ dd.pick }}" style="{{ dd.style }}">{{ dd.label }}</div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:9px">
+          <sc-for list="{{ quickSaves }}" as="q" hint-placeholder-count="3">
+            <button onClick="{{ q.add }}" class="btn btn-primary" style="flex:1;font-size:13.5px;min-height:44px">{{ q.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="margin-top:26px;padding:18px;border-radius:var(--radius-lg);background:var(--color-surface);box-shadow:inset 0 0 0 1px var(--color-neutral-800)">
+        <span class="kick">regla del día</span>
+        <p style="margin:9px 0 14px;font-size:13.5px;line-height:1.55;color:var(--color-neutral-300);text-wrap:pretty">{{ ruleText }}</p>
+        <button onClick="{{ sweepToday }}" class="btn btn-secondary" style="font-size:13px;min-height:44px">{{ sweepLabel }}</button>
+      </div>
+
+      <div style="margin-top:28px">
+        <span class="kick">otras metas</span>
+        <div style="display:flex;flex-direction:column;gap:17px;margin-top:15px">
+          <sc-for list="{{ goals }}" as="g" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between">
+                <span style="font-size:15px;font-weight:300">{{ g.name }}</span>
+                <span class="num" style="font-size:12px;color:var(--color-neutral-500)">{{ g.text }}</span>
+              </div>
+              <div style="height:5px;border-radius:99px;background:var(--color-neutral-900);overflow:hidden">
+                <div style="{{ g.fillStyle }}"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="height:44px"></div>
+    </div>
+    </sc-if>
+
+    <!-- ═══════════ FIJOS ═══════════ -->
+    <sc-if value="{{ isFijos }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Fijos" style="animation:riseIn .28s ease">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <span style="font-size:14.5px;color:var(--color-neutral-300)">fijos</span>
+        <span class="kick">cada mes</span>
+      </div>
+
+      <div style="margin-top:32px">
+        <span class="kick">ingreso del mes</span>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:10px">
+          <span class="num" style="font-size:40px;font-weight:200;letter-spacing:-.04em;line-height:1">{{ incomeText }}</span>
+          <div style="display:flex;gap:7px">
+            <span onClick="{{ incomeDown }}" style="width:38px;height:38px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:300;color:var(--color-neutral-300);cursor:pointer;box-shadow:inset 0 0 0 1px var(--color-neutral-800)">−</span>
+            <span onClick="{{ incomeUp }}" style="width:38px;height:38px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:300;color:var(--color-neutral-300);cursor:pointer;box-shadow:inset 0 0 0 1px var(--color-neutral-800)">+</span>
+          </div>
+        </div>
+        <p style="margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--color-neutral-500);max-width:320px;text-wrap:pretty">{{ incomeNote }}</p>
+      </div>
+
+      <div class="rule" style="margin-top:26px"></div>
+
+      <div style="margin-top:24px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <span class="kick">compromisos del mes</span>
+          <div style="display:flex;align-items:baseline;gap:14px">
+            <span class="num" style="font-size:12.5px;color:var(--color-neutral-300)">{{ fixedTotalText }}</span>
+            <button onClick="{{ toggleEditFixed }}" class="btn btn-primary" style="font-size:12.5px;min-height:36px;padding:0 14px;white-space:nowrap;flex:none">{{ editFixedLabel }}</button>
+          </div>
+        </div>
+        <sc-if value="{{ notEditingFixed }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:2px;height:8px;margin-top:14px;border-radius:99px;overflow:hidden">
+          <sc-for list="{{ fixed }}" as="f" hint-placeholder-count="5">
+            <div style="{{ f.segStyle }}"></div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:15px">
+          <sc-for list="{{ fixed }}" as="f" hint-placeholder-count="5">
+            <div onClick="{{ f.toggle }}" style="{{ f.rowStyle }}">
+              <span style="{{ f.dotStyle }}"></span>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:15.5px;font-weight:300;letter-spacing:-.01em">{{ f.name }}</span>
+                <span style="{{ f.metaStyle }}">{{ f.meta }}</span>
+              </div>
+              <span class="num" style="{{ f.amountStyle }}">{{ f.amount }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin:14px 0 0;font-size:11.5px;line-height:1.6;color:var(--color-neutral-500);text-wrap:pretty">Toca un compromiso para marcarlo pagado este mes. Para cambiar un monto (Arriendo, Moto, Claro, Diezmo…) usa <span style="color:var(--color-accent-300)">Editar</span> aquí arriba.</p>
+        </sc-if>
+
+        <sc-if value="{{ editingFixed }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:15px">
+          <sc-for list="{{ fixedEdit }}" as="f" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:var(--radius-md);box-shadow:inset 0 0 0 1px var(--color-neutral-900)">
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+                <input class="input" value="{{ f.name }}" onChange="{{ f.setName }}" placeholder="Nombre del compromiso" style="width:100%;box-sizing:border-box;min-height:42px;font-size:14px" />
+                <div style="display:flex;gap:6px">
+                  <div style="flex:1.3;min-width:0;display:flex;flex-direction:column;gap:4px">
+                    <span class="kick">cuánto pagas</span>
+                    <input class="input" value="{{ f.amountRaw }}" onChange="{{ f.setAmount }}" inputmode="numeric" placeholder="0" style="width:100%;box-sizing:border-box;min-height:42px;font-size:14px" />
+                  </div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                    <span class="kick">cuándo lo pagas</span>
+                    <input class="input" value="{{ f.day }}" onChange="{{ f.setDay }}" placeholder="ej. el 5" style="width:100%;box-sizing:border-box;min-height:42px;font-size:13px" />
+                  </div>
+                </div>
+              </div>
+              <span onClick="{{ f.remove }}" style="flex:none;width:40px;height:40px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:300;color:var(--color-neutral-400);cursor:pointer;box-shadow:inset 0 0 0 1px var(--color-neutral-800)">×</span>
+            </div>
+          </sc-for>
+          <button onClick="{{ addFixed }}" class="btn btn-secondary" style="min-height:44px;font-size:13px">Agregar compromiso</button>
+        </div>
+        <p style="margin:13px 0 0;font-size:11.5px;line-height:1.6;color:var(--color-neutral-500);text-wrap:pretty">"Cuándo lo pagas" es solo un recordatorio para ti: puedes escribir "el 5", "cada domingo" o dejarlo vacío. Si escribes un número, la app te avisa con color cuando se acerque el día. Se guarda solo.</p>
+        </sc-if>
+      </div>
+
+      <div style="margin-top:26px;padding:18px;border-radius:var(--radius-lg);background:var(--color-surface);box-shadow:inset 0 0 0 1px var(--color-neutral-800)">
+        <span class="kick">lo que queda libre</span>
+        <div class="num" style="font-size:32px;font-weight:200;letter-spacing:-.04em;margin-top:8px;line-height:1">{{ freeMonthText }}</div>
+        <span style="font-size:12.5px;color:var(--color-neutral-500)">{{ perDayText }}</span>
+      </div>
+
+      <div style="margin-top:22px">
+        <button onClick="{{ reset }}" class="btn btn-ghost" style="font-size:12.5px;min-height:44px">Empezar de cero</button>
+      </div>
+
+      <div style="height:44px"></div>
+    </div>
+    </sc-if>
+  </div>
+
+  <!-- ═══════════ NAVEGACIÓN ═══════════ -->
+  <div style="display:flex;align-items:center;gap:14px;padding:12px 20px calc(env(safe-area-inset-bottom) + 16px);border-top:1px solid var(--color-neutral-900);background:var(--color-bg)">
+    <div style="flex:1;display:flex">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <div onClick="{{ t.go }}" style="{{ t.style }}">
+          <span style="{{ t.markStyle }}"></span>
+          <span>{{ t.name }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div onClick="{{ openSheet }}" style="flex:none;width:56px;height:56px;margin-top:-30px;border-radius:99px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--color-bg);box-shadow:0 0 0 1px var(--color-accent-600), 0 0 30px color-mix(in srgb,var(--color-accent) 32%,transparent), 0 10px 26px rgba(0,0,0,.6)">
+      <span style="font-size:31px;font-weight:200;line-height:1;color:var(--color-accent-200);margin-top:-3px">+</span>
+    </div>
+  </div>
+
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#161826"/><rect x="30" y="30" width="40" height="40" rx="10" fill="none" stroke="#968ae0" stroke-width="2.5"/><path d="M50 42v16M43 50h14" stroke="#d2cefd" stroke-width="2.5" stroke-linecap="round"/></svg></template>
+
+  <!-- toast -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 100px);display:flex;justify-content:center;pointer-events:none;z-index:90">
+      <span style="animation:toastIn 2s ease forwards;padding:10px 17px;border-radius:99px;font-size:13px;color:var(--color-accent-200);background:color-mix(in srgb,var(--color-accent) 14%,var(--color-bg));box-shadow:0 0 0 1px var(--color-accent-700)">{{ toast }}</span>
+    </div>
+  </sc-if>
+
+  <!-- ═══════════ GUÍA ═══════════ -->
+  <sc-if value="{{ guideOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:130;display:flex;flex-direction:column;justify-content:flex-end">
+    <div onClick="{{ closeGuide }}" style="position:absolute;inset:0;background:rgba(8,9,14,.78);animation:fadeIn .2s ease"></div>
+    <div style="position:relative;animation:sheetUp .34s cubic-bezier(.2,.9,.2,1);background:var(--color-surface);border-radius:20px 20px 0 0;box-shadow:0 -1px 0 var(--color-neutral-700),0 -24px 60px rgba(0,0,0,.65);padding:12px 22px calc(env(safe-area-inset-bottom) + 18px);max-height:84vh;display:flex;flex-direction:column">
+      <div style="width:38px;height:4px;border-radius:99px;background:var(--color-neutral-800);margin:0 auto 14px;flex:none"></div>
+      <div class="scroll" style="flex:1;min-height:0">
+        <span class="kick">manual</span>
+        <div style="font-size:22px;font-weight:200;letter-spacing:-.02em;margin:8px 0 0">Cómo funciona Seed</div>
+        <p style="margin:10px 0 0;font-size:13.5px;line-height:1.6;color:var(--color-neutral-300);text-wrap:pretty">Seed reparte lo que te entra cada mes: aparta lo que ya está comprometido y te dice cuánto puedes gastar hoy sin quedarte corto a fin de mes.</p>
+
+        <div style="display:flex;flex-direction:column;gap:18px;margin-top:22px">
+          <sc-for list="{{ guideSections }}" as="g" hint-placeholder-count="7">
+            <div>
+              <span class="kick">{{ g.kicker }}</span>
+              <div style="font-size:15.5px;font-weight:300;margin-top:6px">{{ g.title }}</div>
+              <p style="margin:6px 0 0;font-size:13px;line-height:1.6;color:var(--color-neutral-400);text-wrap:pretty">{{ g.body }}</p>
+            </div>
+          </sc-for>
+        </div>
+        <div style="height:16px"></div>
+      </div>
+      <button onClick="{{ closeGuide }}" class="btn btn-primary" style="flex:none;margin-top:14px;min-height:48px;font-size:13.5px">Entendido</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════ PRIMEROS PASOS ═══════════ -->
+  <sc-if value="{{ wizardOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:220;background:var(--color-bg);display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 26px) 26px calc(env(safe-area-inset-bottom) + 22px);animation:fadeIn .2s ease">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <svg viewBox="0 0 48 48" style="width:40px;height:40px;margin-bottom:20px">
+        <ellipse cx="24" cy="31" rx="11" ry="13" fill="var(--color-accent-500)"></ellipse>
+        <path d="M24 18 C23 12 23 10 24 8" stroke="var(--color-accent-200)" stroke-width="2" fill="none" stroke-linecap="round"></path>
+        <path d="M25 13 C31 12 35 9 36 5 C30 5 26 8 25 13Z" fill="var(--color-accent-400)"></path>
+        <path d="M23 15 C18 14 15 12 14 9 C19 9 22 11 23 15Z" fill="var(--color-accent-600)"></path>
+      </svg>
+      <span class="kick">{{ wizStepText }}</span>
+      <div style="font-size:27px;font-weight:200;letter-spacing:-.03em;line-height:1.18;margin-top:10px;text-wrap:pretty">{{ wizTitle }}</div>
+      <p style="margin:14px 0 0;font-size:14px;line-height:1.6;color:var(--color-neutral-400);text-wrap:pretty">{{ wizBody }}</p>
+      <sc-if value="{{ wizHasInput }}" hint-placeholder-val="{{ false }}">
+        <input class="input" value="{{ wizValue }}" onChange="{{ setWizValue }}" inputmode="numeric" placeholder="{{ wizPlaceholder }}" style="width:100%;box-sizing:border-box;margin-top:20px;min-height:52px;font-size:17px" />
+      </sc-if>
+    </div>
+    <div style="display:flex;gap:10px;flex:none">
+      <sc-if value="{{ wizHasSkip }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ wizSkip }}" class="btn btn-ghost" style="flex:1;min-height:50px;font-size:13.5px">Ahora no</button>
+      </sc-if>
+      <button onClick="{{ wizNext }}" class="btn btn-primary" style="flex:1.4;min-height:50px;font-size:14px">{{ wizNextLabel }}</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════ BLOQUEO ═══════════ -->
+  <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:200;background:var(--color-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 26px calc(env(safe-area-inset-bottom) + 22px);animation:fadeIn .2s ease">
+    <svg viewBox="0 0 48 48" style="width:44px;height:44px;margin-bottom:16px">
+      <ellipse cx="24" cy="31" rx="11" ry="13" fill="var(--color-accent-500)"></ellipse>
+      <path d="M24 18 C23 12 23 10 24 8" stroke="var(--color-accent-200)" stroke-width="2" fill="none" stroke-linecap="round"></path>
+      <path d="M25 13 C31 12 35 9 36 5 C30 5 26 8 25 13Z" fill="var(--color-accent-400)"></path>
+      <path d="M23 15 C18 14 15 12 14 9 C19 9 22 11 23 15Z" fill="var(--color-accent-600)"></path>
+    </svg>
+    <span style="font-size:15px;font-weight:300;color:var(--color-neutral-300)">{{ lockTitle }}</span>
+
+    <div style="display:flex;gap:11px;margin-top:22px;min-height:14px">
+      <sc-for list="{{ pinDots }}" as="p" hint-placeholder-count="4">
+        <span style="{{ p.style }}"></span>
+      </sc-for>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,72px);gap:12px;margin-top:26px">
+      <sc-for list="{{ lockKeys }}" as="k" hint-placeholder-count="12">
+        <div onClick="{{ k.tap }}" style="{{ k.style }}">{{ k.label }}</div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ hasBio }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ useBio }}" class="btn btn-secondary" style="margin-top:22px;min-height:46px;font-size:13.5px">Entrar con huella</button>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════ MENÚ ═══════════ -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:110;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden">
+    <div onClick="{{ closeMenu }}" style="position:absolute;inset:0;background:rgba(8,9,14,.74);animation:fadeIn .2s ease"></div>
+      <div class="scroll" style="position:relative;flex:0 1 88dvh;min-height:0;animation:sheetUp .34s cubic-bezier(.2,.9,.2,1);background:var(--color-surface);border-radius:20px 20px 0 0;box-shadow:0 -1px 0 var(--color-neutral-700),0 -24px 60px rgba(0,0,0,.65);padding:12px 22px calc(env(safe-area-inset-bottom) + 22px);max-height:88dvh;overflow-y:auto;overscroll-behavior:contain}">
+      <div style="width:38px;height:4px;border-radius:99px;background:var(--color-neutral-800);margin:0 auto 16px"></div>
+
+      <span class="kick">poner seed en tu celular</span>
+      <p style="margin:10px 0 0;font-size:13.5px;line-height:1.6;color:var(--color-neutral-300);text-wrap:pretty">En Chrome, abre el menú de los tres puntos (⋮) arriba a la derecha del navegador y elige <span style="color:var(--color-accent-300)">Agregar a pantalla de inicio</span>. Queda como una app.</p>
+
+      <div class="rule" style="margin:22px 0"></div>
+
+      <span class="kick">tu meta de ahorro</span>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px">
+        <input class="input" value="{{ goalName }}" onChange="{{ setGoalName }}" placeholder="Nombre de la meta" style="width:100%;box-sizing:border-box;min-height:46px;font-size:14px" />
+        <input class="input" value="{{ goalTargetRaw }}" onChange="{{ setGoalTarget }}" inputmode="numeric" placeholder="Cuánto quieres juntar" style="width:100%;box-sizing:border-box;min-height:46px;font-size:14px" />
+      </div>
+
+      <div class="rule" style="margin:22px 0"></div>
+
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <sc-if value="{{ canInstall }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ installApp }}" class="btn btn-primary" style="width:100%;min-height:48px;font-size:13.5px">Instalar Seed en este celular</button>
+        </sc-if>
+        <button onClick="{{ openGuide }}" class="btn btn-secondary" style="width:100%;min-height:48px;font-size:13.5px">Cómo funciona Seed</button>
+      </div>
+
+      <div class="rule" style="margin:22px 0"></div>
+
+      <span class="kick">compartir seed</span>
+      <p style="margin:9px 0 0;font-size:12.5px;line-height:1.6;color:var(--color-neutral-500);text-wrap:pretty">Quien la reciba abre el enlace y la instala igual que tú. Cada quien tiene sus propios datos: nadie ve los tuyos.</p>
+      <div style="display:flex;gap:9px;margin-top:11px">
+        <button onClick="{{ share }}" class="btn btn-primary" style="flex:1;min-height:46px;font-size:13px">Compartir</button>
+        <button onClick="{{ copyLink }}" class="btn btn-ghost" style="flex:1;min-height:46px;font-size:13px">Copiar enlace</button>
+      </div>
+      <p style="margin:10px 0 0;font-size:12px;line-height:1.5;color:var(--color-neutral-400);word-break:break-all">{{ shareUrl }}</p>
+
+      <div class="rule" style="margin:22px 0"></div>
+
+      <span class="kick">respaldo</span>
+      <p style="margin:9px 0 0;font-size:12.5px;line-height:1.6;color:var(--color-neutral-500);text-wrap:pretty">{{ backupNote }}</p>
+      <div style="display:flex;gap:9px;margin-top:11px">
+        <button onClick="{{ exportData }}" class="btn btn-secondary" style="flex:1;min-height:46px;font-size:13px">Guardar copia</button>
+        <button onClick="{{ importData }}" class="btn btn-ghost" style="flex:1;min-height:46px;font-size:13px">Restaurar</button>
+      </div>
+
+      <div class="rule" style="margin:22px 0"></div>
+
+      <span class="kick">versión</span>
+      <p style="margin:9px 0 0;font-size:12.5px;line-height:1.6;color:var(--color-neutral-500);text-wrap:pretty">{{ versionNote }}</p>
+      <button onClick="{{ checkNow }}" class="btn btn-secondary" style="margin-top:11px;min-height:46px;font-size:13px">Buscar actualización</button>
+
+      <div class="rule" style="margin:22px 0"></div>
+
+      <span class="kick">seguridad</span>
+      <p style="margin:9px 0 0;font-size:12.5px;line-height:1.6;color:var(--color-neutral-500);text-wrap:pretty">{{ securityNote }}</p>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px">
+        <sc-if value="{{ noPin }}" hint-placeholder-val="{{ true }}">
+          <input class="input" value="{{ newPin }}" onChange="{{ setNewPin }}" inputmode="numeric" placeholder="Clave de 4 a 6 números" style="width:100%;box-sizing:border-box;min-height:46px;font-size:14px" />
+          <button onClick="{{ savePin }}" class="btn btn-primary" style="min-height:46px;font-size:13.5px">Activar clave</button>
+        </sc-if>
+        <sc-if value="{{ hasPin }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:9px">
+            <button onClick="{{ toggleBio }}" class="btn btn-secondary" style="flex:1;min-height:46px;font-size:13px">{{ bioLabel }}</button>
+            <button onClick="{{ removePin }}" class="btn btn-ghost" style="flex:1;min-height:46px;font-size:13px">Quitar clave</button>
+          </div>
+          <button onClick="{{ lockNow }}" class="btn btn-ghost" style="min-height:46px;font-size:13px">Bloquear ahora</button>
+        </sc-if>
+      </div>
+
+      <div class="rule" style="margin:22px 0"></div>
+
+      <div style="display:flex;gap:10px">
+        <button onClick="{{ reset }}" class="btn btn-ghost" style="flex:1;min-height:46px;font-size:13px">{{ resetLabel }}</button>
+        <button onClick="{{ closeMenu }}" class="btn btn-primary" style="flex:1;min-height:46px;font-size:13.5px">Listo</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══════════ HOJA DE REGISTRO ═══════════ -->
+  <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;justify-content:flex-end">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(8,9,14,.74);animation:fadeIn .2s ease"></div>
+    <div class="scroll" style="position:relative;animation:sheetUp .34s cubic-bezier(.2,.9,.2,1);background:var(--color-surface);border-radius:20px 20px 0 0;box-shadow:0 -1px 0 var(--color-neutral-700),0 -24px 60px rgba(0,0,0,.65);padding:12px 22px calc(env(safe-area-inset-bottom) + 22px);max-height:88dvh;overflow-y:auto;overscroll-behavior:contain">
+      <div style="width:38px;height:4px;border-radius:99px;background:var(--color-neutral-800);margin:0 auto 14px"></div>
+
+      <!-- paso 1: cartas -->
+      <sc-if value="{{ stepCat }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <span class="kick">en qué</span>
+          <span style="font-size:11.5px;color:var(--color-neutral-500);white-space:nowrap">desliza o toca</span>
+        </div>
+        <div onTouchStart="{{ deckStart }}" onTouchEnd="{{ deckEnd }}" style="position:relative;height:172px;margin-top:14px">
+          <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+            <div onClick="{{ c.choose }}" style="{{ c.style }}">
+              <span class="kick">{{ c.kicker }}</span>
+              <span style="font-size:30px;font-weight:200;letter-spacing:-.03em;margin-top:auto;line-height:1.1">{{ c.name }}</span>
+              <span style="font-size:12px;color:var(--color-neutral-500);margin-top:6px">{{ c.hint }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:16px">
+          <sc-for list="{{ cardDots }}" as="d" hint-placeholder-count="6">
+            <span onClick="{{ d.go }}" style="{{ d.style }}"></span>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button onClick="{{ deckPrev }}" class="btn btn-ghost" style="flex:1;min-height:46px;font-size:13.5px">Anterior</button>
+          <button onClick="{{ deckNext }}" class="btn btn-ghost" style="flex:1;min-height:46px;font-size:13.5px">Siguiente</button>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:12px">
+          <input class="input" value="{{ newCat }}" onChange="{{ setNewCat }}" placeholder="o crea una categoría nueva" style="flex:1;min-height:46px;font-size:14px" />
+          <button onClick="{{ addCat }}" class="btn btn-secondary" style="min-height:46px;font-size:13.5px">Crear</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- paso 2: monto -->
+      <sc-if value="{{ stepAmount }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:fadeIn .2s ease">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <span onClick="{{ backToCat }}" style="{{ catChipStyle }}">{{ cat }} ·  cambiar</span>
+          <span onClick="{{ closeSheet }}" style="font-size:13px;color:var(--color-neutral-500);cursor:pointer;padding:6px">cerrar</span>
+        </div>
+
+        <div style="display:flex;align-items:baseline;gap:5px;padding:18px 0 2px">
+          <span style="font-size:26px;font-weight:200;color:var(--color-neutral-500)">$</span>
+          <span class="num" style="{{ draftStyle }}">{{ draftAmount }}</span>
+        </div>
+
+        <input class="input" value="{{ note }}" onChange="{{ setNote }}" placeholder="¿en qué fue? (opcional)" style="width:100%;box-sizing:border-box;min-height:46px;font-size:14px;margin-top:14px" />
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px">
+          <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+            <div onClick="{{ k.tap }}" style="{{ k.style }}">{{ k.label }}</div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button onClick="{{ saveToJar }}" class="btn btn-ghost" style="flex:1;min-height:48px;font-size:13.5px">Fue ahorro</button>
+          <button onClick="{{ saveExpense }}" class="btn btn-primary" style="flex:1.5;min-height:48px;font-size:13.5px">Registrar gasto</button>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const KEY = 'seed.v1';
+const APP_V = '2.4.1';
+// la app instalada puede quedarse abierta días: la fecha se recalcula, no se congela
+let TODAY, DAY, YEAR, MON, MONTH_DAYS, YM;
+function refreshDate() {
+  TODAY = new Date();
+  DAY = TODAY.getDate();
+  YEAR = TODAY.getFullYear();
+  MON = TODAY.getMonth();
+  MONTH_DAYS = new Date(YEAR, MON + 1, 0).getDate();
+  const next = YEAR * 12 + MON;
+  const changed = YM !== undefined && next !== YM;
+  YM = next;
+  return changed;
+}
+refreshDate();
+function dowOf(day) { return DOW[new Date(YEAR, MON, day).getDay()]; }
+const DOW = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+                'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+const CATS = [
+  { name: 'Comida',     kicker: 'lo más usado', hint: 'almuerzo, algo de paso',    tint: 'var(--color-accent-400)' },
+  { name: 'Transporte', kicker: 'calle',        hint: 'bus, app, gasolina',        tint: 'var(--color-accent-500)' },
+  { name: 'Mercado',    kicker: 'casa',         hint: 'la compra de la semana',    tint: 'var(--color-accent-600)' },
+  { name: 'Salud',      kicker: 'cuidado',      hint: 'droguería, citas',          tint: 'var(--color-accent-2-500)' },
+  { name: 'Ocio',       kicker: 'gusto',        hint: 'salidas, antojos',          tint: 'var(--color-accent-700)' },
+  { name: 'Otro',       kicker: 'sin categoría', hint: 'todo lo que no encaja',     tint: 'var(--color-neutral-600)' }
+];
+
+const FIXED_TINTS = ['var(--color-accent-400)', 'var(--color-accent-500)', 'var(--color-accent-600)',
+                     'var(--color-accent-700)', 'var(--color-neutral-600)', 'var(--color-neutral-700)'];
+
+function hashPin(p) {
+  let h = 5381; const s = 'seed·' + p;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return 'h' + h.toString(36);
+}
+const b64 = (buf) => btoa(String.fromCharCode.apply(null, new Uint8Array(buf)));
+const unb64 = (str) => Uint8Array.from(atob(str), c => c.charCodeAt(0));
+
+function normalize(rawData) {
+  const data = Object.assign(seed(), rawData);
+  data.entries = (data.entries || []).filter(e => typeof e.ym === 'number');
+  data.fixed = (data.fixed || []).map(f => ({
+    name: f.name, amount: f.amount, day: f.day,
+    paidYm: typeof f.paidYm === 'number' ? f.paidYm : null
+  }));
+  if (typeof data.monthlyGoal !== 'number') data.monthlyGoal = seed().monthlyGoal;
+  if (!data.monthlySaved || typeof data.monthlySaved !== 'object') data.monthlySaved = {};
+  if (!data.purchase || typeof data.purchase !== 'object') data.purchase = seed().purchase;
+  if (!data.lock || typeof data.lock !== 'object') data.lock = { hash: null, bio: null };
+  // quien ya venía usando la app no pasa por los primeros pasos
+  if (data.setup !== true && (data.income > 0 || (data.entries && data.entries.length) || (data.fixed && data.fixed.length))) data.setup = true;
+  data.fixed = data.fixed.filter(x => !(/^comida$/i.test((x.name || '').trim()) && !x.amount));
+  const combo = data.fixed.findIndex(x => /arriendo \+ comida/i.test(x.name || ''));
+  if (combo !== -1) {
+    const c = data.fixed[combo];
+    data.fixed.splice(combo, 1, { name: 'Arriendo', amount: c.amount, day: c.day, paidYm: c.paidYm });
+  }
+  return data;
+}
+
+// la clave del candado se convierte en llave de cifrado (PBKDF2 · AES-GCM 256)
+async function deriveKey(pin, salt) {
+  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 210000, hash: 'SHA-256' },
+    km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+
+function seed() {
+  return {
+    setup: false,
+    lock: { hash: null, bio: null, len: 0 },
+    income: 0,
+    cats: [],
+    savings: 0,
+    monthlyGoal: 0,
+    monthlySaved: {},
+    purchase: { name: 'Algo que quiero', target: 0, saved: 0 },
+    fixed: [],
+    goals: [],
+    entries: []
+  };
+}
+
+class Component extends DCLogic {
+  state = {
+    tab: 'inicio', sheet: false, step: 'cat', card: 0, cat: 'Comida',
+    draft: '', picked: DAY, toast: '', armed: null,
+    editFix: false, editGoals: false, dest: 'mes',
+    locked: false, pin: '', newPin: '', encLocked: false, tries: 0, blocked: 0,
+    guide: false, wizard: 0, wizValue: '', confirmReset: false,
+    note: '', newCat: '', menu: false, data: seed()
+  };
+
+  checkUpdate = (loud) => {
+    fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => {
+        if (j && j.v && j.v !== APP_V) {
+          this.setState({ newV: j.v });
+          if (loud === true) this.flash('Hay la versión ' + j.v);
+        } else if (loud === true) {
+          this.flash(j && j.v ? 'Ya tienes la última (' + APP_V + ')' : 'No se pudo leer version.json');
+        }
+      })
+      .catch(() => { if (loud === true) this.flash('Sin internet o archivo no encontrado'); });
+  };
+
+  componentWillUnmount() {
+    clearInterval(this._u);
+    clearInterval(this._d);
+    clearTimeout(this._t);
+    clearTimeout(this._pt);
+    document.removeEventListener('visibilitychange', this.onHide);
+    window.removeEventListener('focus', this.onFocus);
+    window.removeEventListener('beforeinstallprompt', this.onInstallPrompt);
+    window.removeEventListener('appinstalled', this.onInstalled);
+  }
+
+  // si cambió el día mientras la app estaba abierta, se redibuja con la fecha nueva
+  tickDate = () => {
+    const prevDay = DAY;
+    refreshDate();
+    if (prevDay !== DAY) {
+      this.setState(st => ({ picked: st.picked === prevDay ? DAY : st.picked }));
+      this.forceUpdate();
+    }
+  };
+
+  // se vuelve a pedir la clave si dejaste la app más de dos minutos
+  onHide = () => {
+    if (document.visibilityState === 'hidden') { this._away = Date.now(); return; }
+    this.tickDate();
+    const d = this.state.data;
+    if (d.lock && d.lock.hash && this._away && Date.now() - this._away > 120000) {
+      this.setState({ locked: true, pin: '' });
+      if (d.lock.bio) setTimeout(() => this.tryBio(true), 300);
+    }
+  };
+
+  tryBio = async (silent) => {
+    const cred = this.state.data.lock && this.state.data.lock.bio;
+    if (!cred || !window.PublicKeyCredential) { if (!silent) this.flash('Este celular no tiene huella disponible'); return; }
+    try {
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+      await navigator.credentials.get({
+        publicKey: {
+          challenge, timeout: 60000, userVerification: 'required',
+          allowCredentials: [{ id: unb64(cred), type: 'public-key' }]
+        }
+      });
+      this.setState({ locked: false, pin: '' });
+    } catch (e) { if (!silent) this.flash('No se pudo leer la huella'); }
+  };
+
+  registerBio = async () => {
+    if (!window.PublicKeyCredential) return this.flash('Este celular no admite huella');
+    try {
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+      const id = crypto.getRandomValues(new Uint8Array(16));
+      const c = await navigator.credentials.create({
+        publicKey: {
+          challenge,
+          rp: { name: 'Seed' },
+          user: { id, name: 'seed', displayName: 'Seed' },
+          pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+          authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'preferred' },
+          timeout: 60000, attestation: 'none'
+        }
+      });
+      const raw = b64(c.rawId);
+      this.update(x => { x.lock.bio = raw; return x; });
+      this.flash('Huella activada');
+    } catch (e) { this.flash('No se pudo activar la huella'); }
+  };
+
+  expectedLen() {
+    const d = this.state.data;
+    return this._len || (d.lock && d.lock.len) || 0;
+  }
+
+  applyPin = async (p) => {
+    try {
+      const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+      this._key = await deriveKey(p, saltBytes);
+      this._salt = b64(saltBytes);
+    } catch (e) { this._key = null; }
+    this._len = p.length;
+    this.update(x => { x.lock.hash = hashPin(p); x.lock.len = p.length; return x; });
+    this.flash(this._key ? 'Clave activada · datos cifrados' : 'Clave activada');
+  };
+
+  wizAdvance = (value) => {
+    const step = this.state.wizard;
+    if (step === 2 && value) this.update(x => { x.income = parseInt(value, 10) || 0; return x; });
+    if (step === 3 && value) this.update(x => { x.monthlyGoal = parseInt(value, 10) || 0; return x; });
+    if (step === 4 && value) {
+      if (String(value).length < 4) return this.flash('Mínimo 4 números');
+      this.applyPin(String(value));
+    }
+    if (step === 4) {
+      this.update(x => { x.setup = true; return x; });
+      this.setState({ wizard: 0, wizValue: '' });
+      return;
+    }
+    this.setState({ wizard: step + 1, wizValue: '' });
+  };
+
+  tapPin = (k) => {
+    const s = this.state;
+    if (s.blocked > Date.now()) return;
+    if (k === 'del') return this.setState({ pin: s.pin.slice(0, -1) });
+    const pin = (s.pin + k).slice(0, 6);
+    this.setState({ pin });
+    clearTimeout(this._pt);
+    const expect = this.expectedLen();
+    if (expect) {
+      // sabemos cuántos números tiene la clave: solo se prueba al completarla
+      if (pin.length === expect) this._pt = setTimeout(() => this.tryUnlock(pin, true), 60);
+    } else if (pin.length >= 4) {
+      // clave vieja sin longitud guardada: los prefijos se prueban sin castigar
+      this._pt = setTimeout(() => this.tryUnlock(pin, pin.length === 6), 420);
+    }
+  };
+
+  failPin = () => {
+    const tries = this.state.tries + 1;
+    if (tries >= 5) {
+      this.setState({ tries: 0, pin: '', blocked: Date.now() + 30000 });
+      this.flash('Cinco intentos fallidos · espera 30 segundos');
+      setTimeout(() => this.forceUpdate(), 30500);
+      return;
+    }
+    this.setState({ tries, pin: '' });
+    this.flash('Clave incorrecta');
+  };
+
+  tryUnlock = async (pin, canFail) => {
+    // guardado cifrado: la clave correcta es la que logra descifrar
+    if (this.state.encLocked && this._blob) {
+      try {
+        const salt = unb64(this._blob.salt);
+        const key = await deriveKey(pin, salt);
+        const pt = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv: unb64(this._blob.iv) }, key, unb64(this._blob.ct));
+        const data = normalize(JSON.parse(new TextDecoder().decode(pt)));
+        this._key = key; this._salt = this._blob.salt; this._len = pin.length;
+        this.setState({ data, locked: false, encLocked: false, pin: '', tries: 0 });
+      } catch (e) { if (canFail !== false) this.failPin(); }
+      return;
+    }
+    const h = this.state.data.lock && this.state.data.lock.hash;
+    if (hashPin(pin) === h) {
+      this.setState({ locked: false, pin: '', tries: 0 });
+      // instalaciones viejas guardaban en claro: al entrar, se cifran en el sitio
+      this._len = pin.length;
+      if (!this._key) {
+        try {
+          const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+          this._key = await deriveKey(pin, saltBytes);
+          this._salt = b64(saltBytes);
+          this.update(x => { x.lock.len = pin.length; return x; });
+        } catch (e) { this._key = null; }
+      }
+      return;
+    }
+    if (canFail !== false) this.failPin();
+  };
+
+  onInstallPrompt = (e) => {
+    e.preventDefault();
+    this._deferred = e;
+    this.setState({ canInstall: true });
+  };
+
+  onInstalled = () => this.setState({ canInstall: false });
+
+  onFocus = () => { this.tickDate(); this.checkUpdate(); };
+
+  componentDidMount() {
+    this.checkUpdate();
+    this._u = setInterval(this.checkUpdate, 300000);
+    this._d = setInterval(this.tickDate, 60000);
+    window.addEventListener('focus', this.onFocus);
+    window.addEventListener('beforeinstallprompt', this.onInstallPrompt);
+    window.addEventListener('appinstalled', this.onInstalled);
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) this.setState({ wizard: 1 });
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.enc) {
+          // guardado cifrado: sin la clave no hay nada que mostrar
+          this._blob = parsed;
+          this._len = parsed.len || 0;
+          this.setState({ locked: true, encLocked: true });
+        } else {
+          const data = normalize(parsed);
+          if (!data.setup) this.setState({ wizard: 1 });
+          const startLocked = !!(data.lock && data.lock.hash);
+          this.setState({ data, locked: startLocked });
+          if (startLocked && data.lock.bio) setTimeout(() => this.tryBio(true), 350);
+        }
+      }
+    } catch (e) { /* primera vez */ }
+    document.addEventListener('visibilitychange', this.onHide);
+  }
+
+  persist(data) {
+    if (this._key) {
+      const json = JSON.stringify(data);
+      // se encadenan las escrituras para que no se pisen entre sí
+      this._q = (this._q || Promise.resolve()).then(async () => {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, this._key, new TextEncoder().encode(json));
+        try {
+          localStorage.setItem(KEY, JSON.stringify({ enc: 1, salt: this._salt, iv: b64(iv), ct: b64(ct), len: this._len || 0 }));
+        } catch (e) { /* modo privado */ }
+      }).catch(() => {});
+      return;
+    }
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { /* modo privado */ }
+  }
+
+  update(fn) {
+    this.setState(s => {
+      const data = fn(JSON.parse(JSON.stringify(s.data)));
+      this.persist(data);
+      return { data };
+    });
+  }
+
+  copyText(t, ok) {
+    const fallback = () => {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = t;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        this.flash(ok);
+      } catch (e) { this.flash('No se pudo copiar'); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(() => this.flash(ok)).catch(fallback);
+    } else fallback();
+  }
+
+  money(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
+  compact(n) { return '$' + Math.round(n / 1000).toLocaleString('es-CO') + 'k'; }
+
+  flash(t) {
+    this.setState({ toast: t });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: '' }), 2000);
+  }
+
+  tapKey(k) {
+    const d = this.state.draft;
+    if (k === 'del') return this.setState({ draft: d.slice(0, -1) });
+    if (d.length >= 9) return;
+    if (d === '' && k === '000') return;
+    this.setState({ draft: d + k });
+  }
+
+  saveExpense = () => {
+    const v = parseInt(this.state.draft || '0', 10);
+    if (!v) return this.flash('Escribe un monto');
+    const cat = this.state.cat;
+    const note = this.state.note.trim();
+    const time = new Date().toTimeString().slice(0, 5);
+    this.update(d => {
+      // dos registros en el mismo milisegundo tendrían el mismo id y se borrarían juntos
+      const id = Math.max(Date.now(), (d.entries[0] && d.entries[0].id || 0) + 1);
+      d.entries = [{ id, cat, note, amount: v, day: DAY, ym: YM, time }].concat(d.entries);
+      return d;
+    });
+    this.setState({ draft: '', note: '', sheet: false, step: 'cat', tab: 'inicio' });
+    this.flash(this.money(v) + ' en ' + cat.toLowerCase());
+  };
+
+  addSave(v) {
+    const to = this.state.dest;
+    this.update(x => {
+      x.savings += v;
+      if (to === 'compra') { x.purchase.saved += v; }
+      else {
+        x.monthlySaved[YM] = (x.monthlySaved[YM] || 0) + v;
+        if (x.goals[0]) x.goals[0].saved += v;
+      }
+      return x;
+    });
+    this.flash('Al frasco: ' + this.money(v) + (to === 'compra' ? ' · compra' : ' · mes'));
+  }
+
+  saveToJar = () => {
+    const v = parseInt(this.state.draft || '0', 10);
+    if (!v) return this.flash('Escribe un monto');
+    this.addSave(v);
+    this.setState({ draft: '', sheet: false, step: 'cat', tab: 'ahorro' });
+  };
+
+  deckStart = (e) => { this._x = e.touches[0].clientX; };
+  // deckEnd vive en renderVals: necesita el total de categorías, propias incluidas
+
+  renderVals() {
+    const s = this.state;
+    const d = s.data;
+
+    const fixedTotal = d.fixed.reduce((a, f) => a + f.amount, 0);
+    const freeMonth = Math.max(0, d.income - fixedTotal);
+    const mine = (d.entries || []).filter(e => e.ym === YM);
+    const spentMonth = mine.reduce((a, e) => a + e.amount, 0);
+    const todaySpent = mine.filter(e => e.day === DAY).reduce((a, e) => a + e.amount, 0);
+    const remaining = freeMonth - spentMonth;
+    const daysLeft = MONTH_DAYS - DAY + 1;
+    const perDay = freeMonth / MONTH_DAYS;
+    const freeToday = Math.max(0, Math.round(remaining / daysLeft));
+
+    const byDay = new Array(MONTH_DAYS).fill(0);
+    mine.forEach(e => { if (e.day >= 1 && e.day <= MONTH_DAYS) byDay[e.day - 1] += e.amount; });
+    const maxDay = Math.max.apply(null, byDay.concat([1]));
+
+    // racha
+    let streak = 0;
+    for (let day = DAY; day >= 1; day--) { if (byDay[day - 1] > 0) streak++; else break; }
+
+    const savedTotal = d.savings;
+    // sin meta definida no se inventa una cifra: el frasco queda vacío y lo dice
+    const goalTarget = (d.goals[0] && d.goals[0].target > 0) ? d.goals[0].target : 0;
+    const saveFrac = goalTarget ? Math.min(1, savedTotal / goalTarget) : 0;
+
+    const fixed = d.fixed.map((f0, i) => {
+      const f = { name: f0.name, amount: f0.amount, day: f0.day, paid: f0.paidYm === YM };
+      const tint = FIXED_TINTS[i % FIXED_TINTS.length];
+      // ¿el recordatorio trae un día del mes? entonces avisamos según se acerque
+      const dm = /(\d{1,2})/.exec(String(f.day || ''));
+      const dayNum = dm ? Math.min(31, Math.max(1, parseInt(dm[1], 10))) : null;
+      const left = dayNum ? dayNum - DAY : null;
+      const near = !f.paid && left !== null && left <= 15;
+      const urgent = !f.paid && left !== null && left <= 5;
+      const late = !f.paid && left !== null && left < 0;
+      let when = f.paid ? 'pagado' : 'pendiente';
+      if (!f.paid && left !== null) {
+        when = late ? 'se pasó hace ' + (-left) + (left === -1 ? ' día' : ' días')
+             : left === 0 ? 'se paga hoy'
+             : left === 1 ? 'mañana'
+             : 'faltan ' + left + ' días';
+      }
+      const warnColor = late || urgent ? 'var(--color-accent-200)' : near ? 'var(--color-accent-300)' : 'var(--color-neutral-500)';
+      return {
+        name: f.name,
+        amount: this.money(f.amount),
+        meta: (f.day ? f.day + ' · ' : '') + when,
+        metaStyle: { fontSize: '11.5px', color: warnColor },
+        segStyle: { flex: f.amount, background: tint, borderRadius: '99px', opacity: f.paid ? 1 : 0.4 },
+        dotStyle: { width: '7px', height: '7px', borderRadius: '99px', background: tint, flex: 'none', display: 'inline-block', opacity: f.paid ? 1 : 0.45 },
+        rowStyle: {
+          display: 'flex', alignItems: 'center', gap: '13px', padding: '13px 15px',
+          borderRadius: 'var(--radius-md)', cursor: 'pointer',
+          background: f.paid ? 'color-mix(in srgb, var(--color-accent) 7%, transparent)'
+            : late || urgent ? 'color-mix(in srgb, var(--color-accent) 13%, transparent)'
+            : near ? 'color-mix(in srgb, var(--color-accent) 6%, transparent)' : 'transparent',
+          boxShadow: 'inset 0 0 0 1px ' + (f.paid ? 'var(--color-accent-800)'
+            : late || urgent ? 'var(--color-accent-500)'
+            : near ? 'var(--color-accent-700)' : 'var(--color-neutral-900)'),
+          transition: 'background .18s ease, box-shadow .18s ease'
+        },
+        amountStyle: {
+          fontSize: '15.5px', fontWeight: 300,
+          color: f.paid ? 'var(--color-neutral-500)' : 'var(--color-neutral-100)',
+          textDecoration: f.paid ? 'line-through' : 'none'
+        },
+        toggle: () => this.update(x => {
+          x.fixed[i].paidYm = x.fixed[i].paidYm === YM ? null : YM;
+          return x;
+        })
+      };
+    });
+
+    const num = (val) => Math.max(0, parseInt(String(val).replace(/[^0-9]/g, '') || '0', 10));
+    const fixedEdit = d.fixed.map((f0, i) => ({
+      name: f0.name,
+      amountRaw: String(f0.amount),
+      day: f0.day || '',
+      setName: (ev) => { const v = ev.target.value; this.update(x => { x.fixed[i].name = v; return x; }); },
+      setAmount: (ev) => { const v = num(ev.target.value); this.update(x => { x.fixed[i].amount = v; return x; }); },
+      setDay: (ev) => { const v = ev.target.value; this.update(x => { x.fixed[i].day = v; return x; }); },
+      remove: () => this.update(x => { x.fixed.splice(i, 1); return x; })
+    }));
+
+    const monthlyGoal = Math.max(1, d.monthlyGoal || 1);
+    const monthlySaved = (d.monthlySaved && d.monthlySaved[YM]) || 0;
+    const monthlyFrac = Math.min(1, monthlySaved / monthlyGoal);
+    const monthlyLeft = Math.max(0, monthlyGoal - monthlySaved);
+    const pur = d.purchase || { name: '', target: 1, saved: 0 };
+    const purTarget = Math.max(1, pur.target || 1);
+    const purFrac = Math.min(1, (pur.saved || 0) / purTarget);
+    const barFill = (frac) => ({
+      width: (frac * 100) + '%', height: '100%', borderRadius: '99px',
+      background: 'linear-gradient(90deg, var(--color-accent-700), var(--color-accent-400))',
+      transition: 'width .6s cubic-bezier(.2,.9,.2,1)'
+    });
+
+    // las categorías propias también entran al reparto, con su tono de la rampa
+    const ownTints = ['var(--color-accent-300)', 'var(--color-accent-800)', 'var(--color-neutral-500)', 'var(--color-neutral-700)'];
+    const catList = CATS.concat((d.cats || []).map((n, i) => ({
+      name: n, kicker: 'tuya', hint: 'categoría que creaste', tint: ownTints[i % ownTints.length]
+    })));
+    const nCats = catList.length;
+
+    const totals = {};
+    mine.forEach(e => { totals[e.cat] = (totals[e.cat] || 0) + e.amount; });
+    const catStats = catList.filter(c => totals[c.name]).sort((a, b) => totals[b.name] - totals[a.name]).map(c => ({
+      name: c.name,
+      amount: this.money(totals[c.name]),
+      pct: Math.round((totals[c.name] / Math.max(spentMonth, 1)) * 100) + '%',
+      segStyle: { flex: totals[c.name], background: c.tint, borderRadius: '99px' },
+      dotStyle: { width: '7px', height: '7px', borderRadius: '99px', background: c.tint, flex: 'none', display: 'inline-block' }
+    }));
+
+    const dots = byDay.map((v, i) => {
+      const day = i + 1;
+      const r = v / maxDay;
+      const on = day === s.picked;
+      const size = v === 0 ? 8 : Math.round(10 + r * 15);
+      return {
+        pick: () => this.setState({ picked: day }),
+        style: {
+          width: size + 'px', height: size + 'px', borderRadius: '99px', display: 'block',
+          background: v === 0 ? 'transparent' : on ? 'var(--color-accent-300)'
+            : 'color-mix(in srgb, var(--color-accent) ' + Math.round(32 + r * 60) + '%, var(--color-bg))',
+          boxShadow: v === 0 ? 'inset 0 0 0 1px var(--color-neutral-800)'
+            : on ? '0 0 18px color-mix(in srgb, var(--color-accent) 65%, transparent)' : 'none',
+          transition: 'background .18s ease, box-shadow .18s ease, width .2s ease, height .2s ease'
+        }
+      };
+    });
+
+    const week = [6, 5, 4, 3, 2, 1, 0].map(back => DAY - back).filter(day => day >= 1).map(day => {
+      const v = byDay[day - 1];
+      const r = v / maxDay;
+      const isToday = day === DAY;
+      return {
+        label: dowOf(day),
+        labelStyle: { fontSize: '10.5px', color: isToday ? 'var(--color-accent-300)' : 'var(--color-neutral-500)' },
+        dotStyle: {
+          width: (v === 0 ? 8 : Math.round(11 + r * 14)) + 'px',
+          height: (v === 0 ? 8 : Math.round(11 + r * 14)) + 'px',
+          borderRadius: '99px', display: 'block',
+          background: v === 0 ? 'transparent' : 'color-mix(in srgb, var(--color-accent) ' + Math.round(34 + r * 58) + '%, var(--color-bg))',
+          boxShadow: v === 0 ? 'inset 0 0 0 1px var(--color-neutral-800)'
+            : isToday ? '0 0 16px color-mix(in srgb, var(--color-accent) 60%, transparent)' : 'none'
+        }
+      };
+    });
+
+    const pv = byDay[s.picked - 1];
+    const pickedLabel = (s.picked === DAY ? 'hoy' : dowOf(s.picked) + ' ' + s.picked) +
+      ' · ' + (pv === 0 ? 'sin gasto' : this.money(pv));
+
+    const C = 2 * Math.PI * 126, C2 = 2 * Math.PI * 103;
+    const fixedFrac = Math.min(1, fixedTotal / Math.max(d.income, 1));
+    const spentRaw = spentMonth / Math.max(d.income, 1);
+    const spentFrac = Math.min(1 - fixedFrac, spentRaw);
+    const overFrac = Math.min(1, Math.max(0, fixedFrac + spentRaw - 1));
+
+    const ticks = byDay.map((v, i) => {
+      const day = i + 1;
+      return {
+        y2: (17 + 6 + (v / maxDay) * 11).toFixed(1),
+        stroke: day === DAY ? 'var(--color-accent-200)' : v === 0 ? 'var(--color-neutral-900)' : 'var(--color-neutral-700)',
+        rot: 'rotate(' + ((day - 1) * (360 / MONTH_DAYS)).toFixed(2) + ' 150 150)'
+      };
+    });
+
+    const cards = catList.map((c, i) => {
+      const rel = (i - s.card + nCats) % nCats;
+      const vis = rel < 3;
+      return {
+        name: c.name, kicker: c.kicker, hint: c.hint,
+        choose: () => rel === 0
+          ? this.setState({ cat: c.name, step: 'amount', draft: '' })
+          : this.setState({ card: i }),
+        style: {
+          position: 'absolute', left: 0, right: 0, top: 0, height: '150px',
+          display: vis ? 'flex' : 'none', flexDirection: 'column',
+          padding: '17px 19px', borderRadius: 'var(--radius-lg)', boxSizing: 'border-box', cursor: 'pointer',
+          background: rel === 0
+            ? 'linear-gradient(150deg, var(--color-accent-900) 0%, var(--color-surface) 100%)'
+            : 'var(--color-surface)',
+          boxShadow: rel === 0
+            ? 'inset 0 0 0 1px var(--color-accent-700), 0 14px 34px rgba(0,0,0,.5)'
+            : 'inset 0 0 0 1px var(--color-neutral-900)',
+          transform: 'translateY(' + rel * 10 + 'px) scale(' + (1 - rel * 0.05) + ')',
+          transformOrigin: 'top center',
+          opacity: rel === 0 ? 1 : rel === 1 ? 0.55 : 0.25,
+          zIndex: 10 - rel,
+          transition: 'transform .3s cubic-bezier(.2,.9,.2,1), opacity .3s ease, box-shadow .3s ease'
+        }
+      };
+    });
+
+    const cardDots = catList.map((c, i) => ({
+      go: () => this.setState({ card: i }),
+      style: {
+        width: i === s.card ? '18px' : '6px', height: '6px', borderRadius: '99px', display: 'block',
+        background: i === s.card ? 'var(--color-accent)' : 'var(--color-neutral-800)',
+        cursor: 'pointer', transition: 'width .25s ease, background .2s ease'
+      }
+    }));
+
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '000', '0', 'del'].map(k => ({
+      label: k === 'del' ? '⌫' : k,
+      tap: () => this.tapKey(k),
+      style: {
+        height: '52px', borderRadius: 'var(--radius-md)', display: 'flex',
+        alignItems: 'center', justifyContent: 'center', cursor: 'pointer', userSelect: 'none',
+        fontSize: k === '000' ? '17px' : '23px', fontWeight: 300,
+        color: k === 'del' ? 'var(--color-neutral-400)' : 'var(--color-text)',
+        background: 'color-mix(in srgb, var(--color-neutral-100) 5%, transparent)',
+        boxShadow: 'inset 0 0 0 1px var(--color-neutral-800)'
+      }
+    }));
+
+    const tabs = [['inicio', 'Inicio'], ['mes', 'Mes'], ['ahorro', 'Ahorro'], ['fijos', 'Fijos']].map(([id, name]) => {
+      const on = s.tab === id;
+      return {
+        name, go: () => this.setState({ tab: id, armed: null }),
+        style: {
+          flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+          cursor: 'pointer', fontSize: '11.5px', letterSpacing: '.05em', paddingTop: '2px',
+          color: on ? 'var(--color-accent-200)' : 'var(--color-neutral-500)',
+          transition: 'color .16s ease'
+        },
+        markStyle: {
+          width: on ? '22px' : '5px', height: '2px', borderRadius: '99px',
+          background: on ? 'var(--color-accent)' : 'var(--color-neutral-800)',
+          boxShadow: on ? '0 0 10px color-mix(in srgb, var(--color-accent) 70%, transparent)' : 'none',
+          transition: 'width .22s cubic-bezier(.2,.9,.2,1), background .2s ease'
+        }
+      };
+    });
+
+    const todayEntries = mine.filter(e => e.day === DAY).map(e => {
+      const c = catList.find(x => x.name === e.cat) || CATS[5];
+      return {
+        cat: e.note ? e.note : e.cat,
+        amount: '−' + this.money(e.amount),
+        meta: e.note ? e.cat + ' · ' + e.time : e.time,
+        armed: s.armed === e.id,
+        tap: () => this.setState({ armed: s.armed === e.id ? null : e.id }),
+        remove: () => {
+          this.update(x => { x.entries = x.entries.filter(y => y.id !== e.id); return x; });
+          this.setState({ armed: null });
+          this.flash('Borrado');
+        },
+        dotStyle: { width: '7px', height: '7px', borderRadius: '99px', background: c.tint, flex: 'none', display: 'inline-block' }
+      };
+    });
+
+    const goals = d.goals.map(g => {
+      const f = Math.min(1, g.saved / g.target);
+      return {
+        name: g.name,
+        text: this.compact(g.saved) + ' de ' + this.compact(g.target),
+        fillStyle: {
+          width: (f * 100) + '%', height: '100%', borderRadius: '99px',
+          background: 'linear-gradient(90deg, var(--color-accent-700), var(--color-accent-400))',
+          transition: 'width .6s cubic-bezier(.2,.9,.2,1)'
+        }
+      };
+    });
+
+    const quickSaves = [10000, 50000, 100000].map(v => ({
+      label: this.compact(v),
+      add: () => this.addSave(v)
+    }));
+
+    const sweep = Math.max(0, Math.round(perDay - todaySpent));
+
+    return {
+      isInicio: s.tab === 'inicio', isMes: s.tab === 'mes',
+      isAhorro: s.tab === 'ahorro', isFijos: s.tab === 'fijos',
+      tabs, fixed, catStats, dots, week, ticks, cards, cardDots, keys, goals, quickSaves, todayEntries,
+      toast: s.toast,
+
+
+      guideOpen: s.guide,
+      openGuide: () => this.setState({ guide: true, menu: false }),
+      closeGuide: () => this.setState({ guide: false }),
+      guideSections: [
+        { kicker: 'lo primero', title: 'Pon tu ingreso y tus compromisos',
+          body: 'En la pestaña Fijos escribes cuánto te entra al mes y, con el botón Editar, la lista de lo que pagas sí o sí: arriendo, cuotas, servicios, diezmo. Lo que sobra es tu dinero libre, y Seed lo divide entre los días del mes.' },
+        { kicker: 'cada día', title: 'Registra lo que gastas con el botón +',
+          body: 'Eliges la categoría deslizando las tarjetas, escribes el monto y, si quieres, en qué fue. Puedes crear categorías propias. Si ese dinero en realidad lo guardaste, toca "Fue ahorro" en vez de "Registrar gasto".' },
+        { kicker: 'inicio', title: 'Cuánto puedes gastar hoy',
+          body: 'La pantalla de Inicio muestra el cupo del día: lo que queda del mes repartido entre los días que faltan. Si un día te pasas, el cupo de los siguientes baja solo.' },
+        { kicker: 'mes', title: 'Ver a dónde se fue el dinero',
+          body: 'El anillo del mes reparte tu ingreso en fijos, gastado y ahorro. Debajo aparece el detalle por categoría y el día a día.' },
+        { kicker: 'ahorro', title: 'Dos metas a la vez',
+          body: 'Una es el ahorro del mes, lo que te propones guardar cada mes; la otra es para comprar algo concreto. Antes de guardar plata eliges a cuál va. Con Editar corriges los montos cuando quieras.' },
+        { kicker: 'avisos', title: 'Los cobros que se acercan',
+          body: 'Si en un compromiso escribes el día ("el 5", "el 20"), la fila cambia de color según se acerque la fecha y te dice cuántos días faltan. Al tocarla la marcas pagada.' },
+        { kicker: 'privacidad', title: 'Tus cuentas son solo tuyas',
+          body: 'Todo se guarda dentro de tu celular. No hay cuentas, ni registro, ni servidor: nadie más ve tus números, ni siquiera quien te compartió la app.' },
+        { kicker: 'seguridad', title: 'Clave y huella',
+          body: 'En este menú puedes poner una clave de 4 a 6 números. Desde ese momento tus datos quedan cifrados en el celular y la app la pide al abrirla. Con la clave puesta puedes añadir tu huella para entrar más rápido. Si la olvidas no hay forma de recuperar los datos.' },
+        { kicker: 'actualizaciones', title: 'Mejoras sin perder nada',
+          body: 'Cuando hay una versión nueva sale una barra arriba: la tocas y listo. Tus datos siguen intactos. Lo único que borra todo es el botón "Empezar de cero", y hay que confirmarlo dos veces.' }
+      ],
+
+      wizardOn: s.wizard > 0,
+      wizStepText: 'paso ' + s.wizard + ' de 4',
+      wizTitle: ['', 'Bienvenido a Seed', '¿Cuánto te entra al mes?', '¿Cuánto quieres ahorrar cada mes?', 'Protege tus cuentas'][s.wizard] || '',
+      wizBody: ['',
+        'Seed te dice cuánto puedes gastar hoy sin quedarte corto a fin de mes. Todo se guarda en tu celular: no hay cuentas ni registro, y nadie más ve tus números.',
+        'Escribe lo que recibes normalmente. Si cambia mes a mes, luego lo ajustas en la pestaña Fijos.',
+        'Una cantidad realista que puedas apartar. Después puedes cambiarla, y añadir una segunda meta para comprar algo.',
+        'Puedes poner una clave de 4 a 6 números. Tus datos quedan cifrados en el celular y la app te la pide al abrirla. Luego, en el menú, puedes añadir tu huella.'][s.wizard] || '',
+      wizHasInput: s.wizard >= 2,
+      wizPlaceholder: s.wizard === 2 ? 'Ej. 2.300.000' : s.wizard === 3 ? 'Ej. 200.000' : 'Clave de 4 a 6 números',
+      wizValue: s.wizValue,
+      setWizValue: (ev) => this.setState({ wizValue: String(ev.target.value).replace(/[^0-9]/g, '').slice(0, s.wizard === 4 ? 6 : 12) }),
+      wizHasSkip: s.wizard >= 2,
+      wizNextLabel: s.wizard === 1 ? 'Empezar' : s.wizard === 4 ? 'Poner clave' : 'Siguiente',
+      wizSkip: () => this.wizAdvance(null),
+      wizNext: () => this.wizAdvance(s.wizValue),
+
+      locked: s.locked,
+      lockTitle: s.blocked > Date.now() ? 'Demasiados intentos · espera un momento' : 'Escribe tu clave',
+      hasBio: !!(d.lock && d.lock.bio) && !s.encLocked,
+      useBio: () => this.tryBio(false),
+      pinDots: [0, 1, 2, 3, 4, 5].map(i => ({
+        style: {
+          width: '9px', height: '9px', borderRadius: '99px',
+          background: i < s.pin.length ? 'var(--color-accent-300)' : 'transparent',
+          boxShadow: 'inset 0 0 0 1px ' + (i < s.pin.length ? 'var(--color-accent-400)' : 'var(--color-neutral-800)'),
+          transition: 'background .15s ease'
+        }
+      })),
+      lockKeys: ['1','2','3','4','5','6','7','8','9','','0','del'].map(k => ({
+        label: k === 'del' ? '←' : k,
+        tap: k === '' ? () => {} : () => this.tapPin(k),
+        style: {
+          height: '62px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          borderRadius: '99px', fontSize: k === 'del' ? '19px' : '23px', fontWeight: 200,
+          color: 'var(--color-neutral-100)', cursor: k === '' ? 'default' : 'pointer',
+          boxShadow: k === '' ? 'none' : 'inset 0 0 0 1px var(--color-neutral-900)',
+          userSelect: 'none'
+        }
+      })),
+      hasPin: !!(d.lock && d.lock.hash),
+      noPin: !(d.lock && d.lock.hash),
+      securityNote: (d.lock && d.lock.hash)
+        ? 'Tus datos quedan cifrados en el celular con tu clave. La app la pide al abrirla y si la dejas más de dos minutos. Tras cinco intentos fallidos espera 30 segundos. Nada sale de tu teléfono.'
+        : 'Pon una clave y tus cuentas quedan cifradas en el celular: sin ella no se pueden leer, ni siquiera abriendo el navegador por dentro. Después puedes añadir la huella.',
+      newPin: s.newPin,
+      setNewPin: (ev) => this.setState({ newPin: String(ev.target.value).replace(/[^0-9]/g, '').slice(0, 6) }),
+      savePin: () => {
+        const p = s.newPin;
+        if (p.length < 4) return this.flash('Mínimo 4 números');
+        this.setState({ newPin: '' });
+        this.applyPin(p);
+      },
+      removePin: () => {
+        this._key = null; this._salt = null; this._blob = null; this._len = 0;
+        this.update(x => { x.lock = { hash: null, bio: null }; return x; });
+        this.flash('Clave quitada · datos sin cifrar');
+      },
+      lockNow: () => this.setState({ locked: true, menu: false, pin: '' }),
+      bioLabel: (d.lock && d.lock.bio) ? 'Quitar huella' : 'Activar huella',
+      toggleBio: () => {
+        if (d.lock && d.lock.bio) { this.update(x => { x.lock.bio = null; return x; }); return this.flash('Huella quitada'); }
+        this.registerBio();
+      },
+      fixedEdit,
+      editingFixed: s.editFix, notEditingFixed: !s.editFix,
+      editFixedLabel: s.editFix ? 'Listo' : 'Editar',
+      toggleEditFixed: () => this.setState({ editFix: !s.editFix }),
+      addFixed: () => this.update(x => {
+        x.fixed = x.fixed.concat([{ name: 'Nuevo compromiso', amount: 0, day: '', paidYm: null }]);
+        return x;
+      }),
+
+      editingGoals: s.editGoals, notEditingGoals: !s.editGoals,
+      editGoalsLabel: s.editGoals ? 'Listo' : 'Editar',
+      toggleEditGoals: () => this.setState({ editGoals: !s.editGoals }),
+      monthlyText: this.money(monthlySaved) + ' / ' + this.money(monthlyGoal),
+      monthlyFillStyle: barFill(monthlyFrac),
+      monthlyNote: monthlyLeft > 0
+        ? 'Te faltan ' + this.money(monthlyLeft) + ' para cumplir el mes.'
+        : 'Ya cumpliste el ahorro de este mes.',
+      monthlyGoalRaw: String(d.monthlyGoal || 0),
+      monthlySavedRaw: String(monthlySaved),
+      setMonthlyGoal: (ev) => { const v = num(ev.target.value); this.update(x => { x.monthlyGoal = v; return x; }); },
+      setMonthlySaved: (ev) => { const v = num(ev.target.value); this.update(x => { x.monthlySaved[YM] = v; return x; }); },
+      purchaseName: pur.name || 'Para comprar',
+      purchaseText: this.money(pur.saved || 0) + ' / ' + this.money(purTarget),
+      purchaseFillStyle: barFill(purFrac),
+      purchaseNote: (pur.saved || 0) >= purTarget
+        ? 'Ya lo tienes completo.'
+        : 'Te faltan ' + this.money(purTarget - (pur.saved || 0)) + '.',
+      purchaseNameRaw: pur.name || '',
+      purchaseTargetRaw: String(pur.target || 0),
+      purchaseSavedRaw: String(pur.saved || 0),
+      setPurchaseName: (ev) => { const v = ev.target.value; this.update(x => { x.purchase.name = v; return x; }); },
+      setPurchaseTarget: (ev) => { const v = num(ev.target.value); this.update(x => { x.purchase.target = v; return x; }); },
+      setPurchaseSaved: (ev) => { const v = num(ev.target.value); this.update(x => { x.purchase.saved = v; return x; }); },
+
+      dests: [['mes', 'Ahorro del mes'], ['compra', pur.name || 'Compra']].map(([id, label]) => {
+        const on = s.dest === id;
+        return {
+          label,
+          pick: () => this.setState({ dest: id }),
+          style: {
+            flex: 1, minHeight: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '0 10px', borderRadius: '99px', cursor: 'pointer', textAlign: 'center',
+            fontSize: '12.5px', fontWeight: 300, lineHeight: 1.2,
+            color: on ? 'var(--color-accent-200)' : 'var(--color-neutral-400)',
+            background: on ? 'color-mix(in srgb, var(--color-accent) 12%, transparent)' : 'transparent',
+            boxShadow: 'inset 0 0 0 1px ' + (on ? 'var(--color-accent-700)' : 'var(--color-neutral-900)'),
+            transition: 'all .18s ease'
+          }
+        };
+      }),
+
+      sheetOpen: s.sheet, stepCat: s.sheet && s.step === 'cat', stepAmount: s.sheet && s.step === 'amount',
+      openSheet: () => this.setState({ sheet: true, step: 'cat', draft: '' }),
+      closeSheet: () => this.setState({ sheet: false, step: 'cat', draft: '' }),
+      backToCat: () => this.setState({ step: 'cat' }),
+      deckStart: this.deckStart,
+      deckEnd: (e) => {
+        if (this._x == null) return;
+        const dx = e.changedTouches[0].clientX - this._x;
+        this._x = null;
+        if (Math.abs(dx) < 34) return;
+        this.setState(x => ({ card: (x.card + (dx < 0 ? 1 : nCats - 1)) % nCats }));
+      },
+      deckNext: () => this.setState(x => ({ card: (x.card + 1) % nCats })),
+      deckPrev: () => this.setState(x => ({ card: (x.card + nCats - 1) % nCats })),
+      note: s.note,
+      setNote: (e) => this.setState({ note: e.target.value }),
+      newCat: s.newCat,
+      setNewCat: (e) => this.setState({ newCat: e.target.value }),
+      addCat: () => {
+        const n = s.newCat.trim();
+        if (!n) return this.flash('Escribe un nombre');
+        if (catList.some(c => c.name.toLowerCase() === n.toLowerCase())) return this.flash('Ya existe');
+        this.update(x => { x.cats = (x.cats || []).concat([n]); return x; });
+        this.setState({ newCat: '', cat: n, card: nCats, step: 'amount', draft: '' });
+        this.flash('Categoría creada: ' + n);
+      },
+      canInstall: !!s.canInstall,
+      installApp: async () => {
+        if (!this._deferred) return this.flash('Usa el menú ⋮ de Chrome');
+        this._deferred.prompt();
+        try { await this._deferred.userChoice; } catch (e) { /* cancelado */ }
+        this._deferred = null;
+        this.setState({ canInstall: false });
+      },
+      shareUrl: (location.origin + location.pathname).replace(/index\.html$/, ''),
+      share: () => {
+        const url = (location.origin + location.pathname).replace(/index\.html$/, '');
+        const text = 'Seed: para llevar tus gastos y tu ahorro del día a día. Se instala desde el navegador.';
+        if (navigator.share) {
+          navigator.share({ title: 'Seed', text, url }).catch(() => {});
+        } else {
+          this.copyText(url, 'Enlace copiado');
+        }
+      },
+      copyLink: () => this.copyText((location.origin + location.pathname).replace(/index\.html$/, ''), 'Enlace copiado'),
+      backupNote: 'Guarda una copia de tus datos en el celular. Si cambias de teléfono o borras Chrome, la restauras con ese archivo.',
+      exportData: () => {
+        try {
+          // la copia va sin la clave: si la restauras en otro celular, entra sin candado
+          const copy = Object.assign({}, d, { lock: { hash: null, bio: null, len: 0 } });
+          const blob = new Blob([JSON.stringify(copy, null, 2)], { type: 'application/json' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'seed-respaldo-' + new Date().toISOString().slice(0, 10) + '.json';
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+          this.flash('Copia guardada en Descargas');
+        } catch (e) { this.flash('No se pudo guardar'); }
+      },
+      importData: () => {
+        const inp = document.createElement('input');
+        inp.type = 'file';
+        inp.accept = 'application/json,.json';
+        inp.onchange = () => {
+          const f = inp.files && inp.files[0];
+          if (!f) return;
+          const r = new FileReader();
+          r.onload = () => {
+            try {
+              const parsed = normalize(JSON.parse(r.result));
+              this.update(() => parsed);
+              this.setState({ menu: false });
+              this.flash('Datos restaurados');
+            } catch (e) { this.flash('Ese archivo no sirve'); }
+          };
+          r.readAsText(f);
+        };
+        inp.click();
+      },
+      versionNote: 'Tienes la versión ' + APP_V + '. La app revisa sola al abrirla y cada cinco minutos.',
+      checkNow: () => this.checkUpdate(true),
+      hasUpdate: !!s.newV,
+      applyUpdate: () => {
+        try {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage('seed-update');
+          }
+        } catch (e) { /* sin service worker: recarga normal */ }
+        setTimeout(() => location.replace(location.pathname + '?v=' + encodeURIComponent(s.newV)), 300);
+      },
+      menuOpen: s.menu,
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      goalTargetRaw: goalTarget ? String(goalTarget) : '',
+      setGoalName: (e) => {
+        const v = e.target.value;
+        this.update(x => {
+          if (!x.goals[0]) x.goals[0] = { name: '', target: 0, saved: 0 };
+          x.goals[0].name = v; return x;
+        });
+      },
+      setGoalTarget: (e) => {
+        const v = Math.max(0, parseInt(String(e.target.value).replace(/[^0-9]/g, '') || '0', 10));
+        this.update(x => {
+          if (!x.goals[0]) x.goals[0] = { name: 'Tu meta', target: 0, saved: 0 };
+          x.goals[0].target = v; return x;
+        });
+      },
+      saveExpense: this.saveExpense, saveToJar: this.saveToJar,
+      goAhorro: () => this.setState({ tab: 'ahorro' }),
+
+      dateLabel: dowOf(DAY) + ' ' + DAY + ' · ' + MONTHS[MON],
+      monthLabel: MONTHS[MON] + ' ' + YEAR,
+      freeToday: this.money(freeToday),
+      freeLine: remaining >= 0
+        ? 'Te quedan ' + this.money(remaining) + ' de los ' + this.money(freeMonth) + ' libres del mes. Hoy ya llevas ' + this.money(todaySpent) + '.'
+        : 'Te pasaste ' + this.money(-remaining) + ' de lo libre del mes. Hoy llevas ' + this.money(todaySpent) + '.',
+      streakText: streak > 0 ? streak + (streak === 1 ? ' día seguido registrando' : ' días seguidos registrando') : 'Empieza tu racha hoy',
+      todaySpentText: this.money(todaySpent),
+      hasToday: todayEntries.length > 0,
+      noToday: todayEntries.length === 0,
+
+      remainingMonth: this.money(Math.max(0, remaining)),
+      daysLeftText: daysLeft === 1 ? 'último día del mes' : daysLeft + ' días por delante',
+      ringFixed: (fixedFrac * C) + ' ' + C,
+      ringSpent: (spentFrac * C) + ' ' + C,
+      ringSpentOffset: -fixedFrac * C,
+      ringOver: (overFrac * (2 * Math.PI * 138)) + ' ' + (2 * Math.PI * 138),
+      overText: overFrac > 0
+        ? 'El aro exterior marca ' + this.money(Math.round(overFrac * d.income)) + ' por encima del ingreso del mes.'
+        : '',
+      ringSave: (saveFrac * C2) + ' ' + C2,
+      pickedLabel,
+      legend: [
+        { name: 'fijos', amount: this.money(fixedTotal), dotStyle: { width: '7px', height: '7px', borderRadius: '99px', background: 'var(--color-accent-700)', display: 'inline-block' } },
+        { name: 'gastado', amount: this.money(spentMonth), dotStyle: { width: '7px', height: '7px', borderRadius: '99px', background: 'var(--color-accent-400)', display: 'inline-block' } },
+        { name: 'ahorro', amount: this.money(savedTotal), dotStyle: { width: '7px', height: '7px', borderRadius: '99px', background: 'var(--color-accent)', display: 'inline-block' } }
+      ],
+
+      savingsText: this.money(savedTotal),
+      goalName: (d.goals[0] && d.goals[0].name) || 'tu meta',
+      goalLine: goalTarget
+        ? Math.round(saveFrac * 100) + '% de ' + this.money(goalTarget)
+        : 'Define tu meta en el menú ⋮',
+      jarFillStyle: {
+        position: 'absolute', left: 0, right: 0, bottom: 0, height: (saveFrac * 100) + '%',
+        background: 'linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 44%, transparent), color-mix(in srgb, var(--color-accent) 14%, transparent))',
+        transition: 'height .7s cubic-bezier(.2,.9,.2,1)'
+      },
+      jarLineStyle: {
+        position: 'absolute', left: 0, right: 0, bottom: (saveFrac * 100) + '%', height: '2px',
+        background: 'var(--color-accent-300)',
+        boxShadow: '0 0 18px color-mix(in srgb, var(--color-accent) 75%, transparent)',
+        transition: 'bottom .7s cubic-bezier(.2,.9,.2,1)'
+      },
+      jarMarks: [25, 50, 75].map(p => ({
+        style: { position: 'absolute', right: 0, bottom: p + '%', width: '10px', height: '1px', background: 'var(--color-neutral-800)' }
+      })),
+      jarBandStyle: {
+        position: 'absolute', left: 0, top: 0, bottom: 0, width: (saveFrac * 100) + '%',
+        background: 'linear-gradient(90deg, color-mix(in srgb, var(--color-accent) 26%, transparent), color-mix(in srgb, var(--color-accent) 8%, transparent))',
+        borderRight: '1px solid var(--color-accent-400)',
+        transition: 'width .6s cubic-bezier(.2,.9,.2,1)'
+      },
+      ruleText: 'Lo que no gastaste hoy del cupo diario puede irse al frasco. Hoy serían ' + this.money(sweep) + '.',
+      sweepLabel: sweep > 0 ? 'Guardar ' + this.money(sweep) : 'Nada por barrer hoy',
+      sweepToday: () => {
+        if (sweep <= 0) return this.flash('Hoy no sobró nada');
+        this.addSave(sweep);
+      },
+
+      incomeText: this.money(d.income),
+      incomeNote: 'Si tu ingreso cambia mes a mes, ajústalo aquí y todo lo demás se recalcula.',
+      incomeUp: () => this.update(x => { x.income += 50000; return x; }),
+      incomeDown: () => this.update(x => { x.income = Math.max(0, x.income - 50000); return x; }),
+      fixedTotalText: this.money(fixedTotal) + ' / mes',
+      freeMonthText: this.money(freeMonth),
+      perDayText: this.money(Math.round(perDay)) + ' por día si lo repartes parejo',
+      resetLabel: s.confirmReset ? '¿Seguro? Toca otra vez' : 'Borrar todos mis datos',
+      reset: () => {
+        if (!s.confirmReset) {
+          this.setState({ confirmReset: true });
+          clearTimeout(this._cr);
+          this._cr = setTimeout(() => this.setState({ confirmReset: false }), 5000);
+          return;
+        }
+        this._key = null; this._salt = null; this._blob = null; this._len = 0;
+        const fresh = seed();
+        this.persist(fresh);
+        this.setState({ data: fresh, tab: 'inicio', armed: null, menu: false, confirmReset: false, wizard: 1, wizValue: '' });
+        this.flash('Todo borrado');
+      },
+
+      cat: s.cat,
+      catChipStyle: {
+        padding: '8px 14px', borderRadius: '99px', fontSize: '13px', cursor: 'pointer',
+        color: 'var(--color-accent-200)',
+        background: 'color-mix(in srgb, var(--color-accent) 16%, transparent)',
+        boxShadow: 'inset 0 0 0 1px var(--color-accent-600)'
+      },
+      draftAmount: s.draft === '' ? '0' : parseInt(s.draft, 10).toLocaleString('es-CO'),
+      draftStyle: {
+        fontSize: '44px', fontWeight: 200, letterSpacing: '-.03em', lineHeight: 1,
+        color: s.draft === '' ? 'var(--color-neutral-500)' : 'var(--color-text)'
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
